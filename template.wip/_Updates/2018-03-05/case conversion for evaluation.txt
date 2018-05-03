@@ -1,0 +1,25 @@
+[Expert@BeasleyMDM01:0]# export APISCRIPTVERBOSE=TRUE
+[Expert@BeasleyMDM01:0]# echo "$APISCRIPTVERBOSE" | tr '[:lower:]' '[:upper:]'
+TRUE
+[Expert@BeasleyMDM01:0]# echo "$APISCRIPTVERBOSE" | tr '[:lower:]'
+tr: missing operand after `[:lower:]'
+Two strings must be given when translating.
+Try `tr --help' for more information.
+[Expert@BeasleyMDM01:0]# echo "$APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]'
+true
+[Expert@BeasleyMDM01:0]# export teststring=`echo $APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]'`
+>
+[Expert@BeasleyMDM01:0]# export teststring=`echo "$APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]'`
+[Expert@BeasleyMDM01:0]# echo $teststring
+true
+[Expert@BeasleyMDM01:0]# export APISCRIPTVERBOSE=FALSE
+[Expert@BeasleyMDM01:0]# export teststring=`echo "$APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]'`
+[Expert@BeasleyMDM01:0]# echo $teststring
+false
+[Expert@BeasleyMDM01:0]# echo x"(echo "$APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]')"
+x(echo FALSE | tr '[:upper:]' '[:lower:]')
+[Expert@BeasleyMDM01:0]# echo x"(`echo "$APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]'`)"
+x(false)
+[Expert@BeasleyMDM01:0]# echo x"`echo "$APISCRIPTVERBOSE" | tr '[:upper:]' '[:lower:]'`"
+xfalse
+[Expert@BeasleyMDM01:0]#

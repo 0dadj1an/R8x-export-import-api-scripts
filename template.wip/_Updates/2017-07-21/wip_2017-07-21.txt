@@ -1,0 +1,76 @@
+﻿# MODIFIED 2017-07-21 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2017-07-21
+
+# ADDED 2017-07-21 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+
+#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/- ADDED 2017-07-21
+
+
+
+export script_use_publish="FALSE"
+
+export script_use_output="TRUE"
+export script_use_import="FALSE"
+export script_use_delete="FALSE"
+
+export script_dump_standard="FALSE"
+export script_dump_full="FALSE"
+export script_dump_csv="FALSE"
+
+export script_use_csvfile="FALSE"
+
+
+if [ x"$script_use_output" = x"TRUE" ] ; then
+fi
+
+if [ x"$script_use_import" = x"TRUE" ] ; then
+fi
+
+if [ x"$script_use_delete" = x"TRUE" ] ; then
+fi
+
+if [ x"$script_use_csvfile" = x"TRUE" ] ; then
+fi
+
+
+
+if [ x"$script_dump_standard" = x"TRUE" ] ; then
+fi
+
+if [ x"$script_dump_full" = x"TRUE" ] ; then
+fi
+
+if [ x"$script_dump_csv" = x"TRUE" ] ; then
+fi
+
+# -------------------------------------------------------------------------------------------------
+# groups
+# -------------------------------------------------------------------------------------------------
+
+echo
+export APICLIobjecttype=group
+export APICLIobjectstype=groups
+objectstotal_groups=$(mgmt_cli show $APICLIobjectstype limit 1 offset 0 details-level "standard" --format json -s $APICLIsessionfile | $JQ ".total")
+export number_groups="$objectstotal_groups"
+export number_of_objects=$number_groups
+
+echo 'Number of '$APICLIobjecttype' Objects is = '$number_of_objects' '$APICLIobjectstype
+echo 'Number of '$APICLIobjecttype' Objects is = '$number_of_objects' '$APICLIobjectstype >> $APICLIpathlog
+
+
+
+
+
+
+
+
+
+
+

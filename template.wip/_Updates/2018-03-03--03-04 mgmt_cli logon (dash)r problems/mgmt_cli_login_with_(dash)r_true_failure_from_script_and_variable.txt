@@ -1,0 +1,136 @@
+mgmt_cli Login!
+
+Login to mgmt_cli as administrator and save to session file :  id.txt
+
+Execute login with loginstring "-r true domain "Global" --port 4434"
+Execute operations with domaintarget "-d "Global""
+Execute operations with mgmttarget ""
+
+Error: Bad input was provided to mgmt_cli_login due to an internal error
+
+mgmt_cli login error!
+
+
+Terminating script...
+
+[Expert@BeasleyMDM01:0]# mgmt_cli login -r true domain "Global" --port 4434 > id.txt
+[Expert@BeasleyMDM01:0]# cat id.txt
+uid: "824337d5-a14d-416e-9569-05a16436ddbe"
+sid: "fcfVxB3c7z885JxcRpLUDAsZPnYvQzQwsOWp57v_Ylo"
+url: "https://127.0.0.1:4434/web_api"
+session-timeout: 600
+last-login-was-at:
+  posix: 1520097898
+  iso-8601: "2018-03-03T11:24-0600"
+read-only: false
+standby: false
+api-server-version: "1.1"
+[Expert@BeasleyMDM01:0]# mgmt_cli logout -s id.txt
+message: "OK"
+
+[Expert@BeasleyMDM01:0]# rm id.txt
+[Expert@BeasleyMDM01:0]# export testlogin=-r true domain "Global" --port 4434
+-bash: export: `--port': not a valid identifier
+-bash: export: `4434': not a valid identifier
+[Expert@BeasleyMDM01:0]# export testlogin='-r true domain "Global" --port 4434'
+[Expert@BeasleyMDM01:0]# echo testlogin
+testlogin
+[Expert@BeasleyMDM01:0]# echo $testlogin
+-r true domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]#
+[Expert@BeasleyMDM01:0]# echo $testlogin
+-r true domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# export testlogin='domain "Global" --port 4434'
+[Expert@BeasleyMDM01:0]# echo $testlogin
+domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli -r true $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# mgmt_cli $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# mgmt_cli "$testlogin" > id.txt
+
+[Expert@BeasleyMDM01:0]# export testlogin='-r true domain Global --port 4434'
+[Expert@BeasleyMDM01:0]# echo $testlogin
+-r true domain Global --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli "$testlogin" > id.txt
+Unknown parameter -r true domain Global --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# mgmt_cli $(testlogin) > id.txt
+-bash: testlogin: command not found
+No command name was specified!
+[Expert@BeasleyMDM01:0]# mgmt_cli ($testlogin) > id.txt
+-bash: syntax error near unexpected token `$testlogin'
+[Expert@BeasleyMDM01:0]# mgmt_cli ${testlogin} > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# echo ${testlogin}
+-r true domain Global --port 4434
+[Expert@BeasleyMDM01:0]# export testlogin='-r true domain "Global" --port 4434'
+[Expert@BeasleyMDM01:0]# echo ${testlogin}
+-r true domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli ${testlogin} > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# mgmt_cli Login!
+
+Login to mgmt_cli as administrator and save to session file :  id.txt
+
+Execute login with loginstring "-r true domain "Global" --port 4434"
+Execute operations with domaintarget "-d "Global""
+Execute operations with mgmttarget ""
+
+Error: Bad input was provided to mgmt_cli_login due to an internal error
+
+mgmt_cli login error!
+
+
+Terminating script...
+
+[Expert@BeasleyMDM01:0]# mgmt_cli login -r true domain "Global" --port 4434 > id.txt
+[Expert@BeasleyMDM01:0]# cat id.txt
+uid: "824337d5-a14d-416e-9569-05a16436ddbe"
+sid: "fcfVxB3c7z885JxcRpLUDAsZPnYvQzQwsOWp57v_Ylo"
+url: "https://127.0.0.1:4434/web_api"
+session-timeout: 600
+last-login-was-at:
+  posix: 1520097898
+  iso-8601: "2018-03-03T11:24-0600"
+read-only: false
+standby: false
+api-server-version: "1.1"
+[Expert@BeasleyMDM01:0]# mgmt_cli logout -s id.txt
+message: "OK"
+
+[Expert@BeasleyMDM01:0]# rm id.txt
+[Expert@BeasleyMDM01:0]# export testlogin=-r true domain "Global" --port 4434
+-bash: export: `--port': not a valid identifier
+-bash: export: `4434': not a valid identifier
+[Expert@BeasleyMDM01:0]# export testlogin='-r true domain "Global" --port 4434'
+[Expert@BeasleyMDM01:0]# echo testlogin
+testlogin
+[Expert@BeasleyMDM01:0]# echo $testlogin
+-r true domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]#
+[Expert@BeasleyMDM01:0]# echo $testlogin
+-r true domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# export testlogin='domain "Global" --port 4434'
+[Expert@BeasleyMDM01:0]# echo $testlogin
+domain "Global" --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli -r true $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# mgmt_cli $testlogin > id.txt
+Error: The parameters of domain command should be provided in pairs (key and value). You have provided an odd number of parameters which suggests that you are probably missing a parameter.
+[Expert@BeasleyMDM01:0]# mgmt_cli "$testlogin" > id.txt
+
+[Expert@BeasleyMDM01:0]# export testlogin='-r true domain Global --port 4434'
+[Expert@BeasleyMDM01:0]# echo $testlogin
+-r true domain Global --port 4434
+[Expert@BeasleyMDM01:0]# mgmt_cli "$testlogin" > id.txt
+Unknown parameter -r true domain Global --port 4434
+Username: Password:
+Couldn't connect to server
+If you need to use a proxy server, add the '--proxy' parameter
+[Expert@BeasleyMDM01:0]#

@@ -1,0 +1,103 @@
+﻿#export MgmtCLI_Base_OpParms="--format json -s $APICLIsessionfile"
+#export MgmtCLI_IgnoreErr_OpParms="ignore-warnings true ignore-errors true --ignore-errors true"
+#
+#export MgmtCLI_Show_OpParms="details-level /"$APICLIdetaillvl/" $MgmtCLI_Base_OpParms"
+#
+#if [ $(expr $currentapiversion '>=' 1.1 ) ] ; then
+#    export MgmtCLI_Add_OpParms="set-if-exists true $MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+#else
+#    export MgmtCLI_Add_OpParms="$MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+#fi
+#
+#export MgmtCLI_Set_OpParms="$MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+#
+#export MgmtCLI_Delete_OpParms="details-level /"$APICLIdetaillvl/" $MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+#
+#mgmt_cli delete $APICLIobjecttype --batch $APICLIDeleteCSVfile ignore-warnings true ignore-errors true --ignore-errors true --format json -s $APICLIsessionfile > $OutputPath
+#mgmt_cli show $APICLIobjecttype limit $APICLIObjectLimit offset 0 details-level "$APICLIdetaillvl" --format json -s $APICLIsessionfile | $JQ '.objects[] | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
+#mgmt_cli add $APICLIobjecttype --batch $APICLIImportCSVfile ignore-warnings true ignore-errors true --ignore-errors true --format json -s $APICLIsessionfile > $OutputPath
+#mgmt_cli set $APICLIobjecttype --batch $APICLIImportCSVfile ignore-warnings true ignore-errors true --ignore-errors true --format json -s $APICLIsessionfile > $OutputPath
+
+
+
+# -------------------------------------------------------------------------------------------------
+
+    export MgmtCLI_Base_OpParms="--format json -s $APICLIsessionfile"
+    export MgmtCLI_IgnoreErr_OpParms="ignore-warnings true ignore-errors true --ignore-errors true"
+    export MgmtCLI_Delete_OpParms="details-level /"$APICLIdetaillvl/" $MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+    
+    echo
+    echo "Delete $APICLIobjecttype using CSV File : $APICLIDeleteCSVfile"
+    echo "  mgmt_cli parameters : $MgmtCLI_Delete_OpParms"
+    echo "  and dump to $OutputPath"
+    echo
+    
+    mgmt_cli delete $APICLIobjecttype --batch $APICLIDeleteCSVfile $MgmtCLI_Delete_OpParms > $OutputPath
+
+# -------------------------------------------------------------------------------------------------
+
+    export MgmtCLI_Base_OpParms="--format json -s $APICLIsessionfile"
+    export MgmtCLI_IgnoreErr_OpParms="ignore-warnings true ignore-errors true --ignore-errors true"
+    
+    export MgmtCLI_Show_OpParms="details-level /"$APICLIdetaillvl/" $MgmtCLI_Base_OpParms"
+    
+    objectstotal=$(mgmt_cli show $APICLIobjecttype limit 1 offset 0 details-level "$APICLIdetaillvl" $MgmtCLI_Base_OpParms | $JQ ".total")
+
+    objectstoshow=$objectstotal
+
+    echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit chunks:"
+
+    objectslefttoshow=$objectstoshow
+    currentoffset=0
+
+    while [ $objectslefttoshow -ge 1 ] ; do
+        # we have objects to process
+        echo "  Now processing up to next $APICLIObjectLimit objects starting with object $currentoffset of $objectslefttoshow remainging!"
+
+        mgmt_cli show $APICLIobjecttype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
+
+        objectslefttoshow=`expr $objectslefttoshow - $APICLIObjectLimit`
+        currentoffset=`expr $currentoffset + $APICLIObjectLimit`
+    done
+
+
+# -------------------------------------------------------------------------------------------------
+
+    export MgmtCLI_Base_OpParms="--format json -s $APICLIsessionfile"
+    export MgmtCLI_IgnoreErr_OpParms="ignore-warnings true ignore-errors true --ignore-errors true"
+    
+    if [ $(expr $currentapiversion '>=' 1.1 ) ] ; then
+        export MgmtCLI_Add_OpParms="set-if-exists true $MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+    else
+        export MgmtCLI_Add_OpParms="$MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+    fi
+    
+    echo
+    echo "Import $APICLIobjecttype from CSV File : $APICLIImportCSVfile"
+    echo "  mgmt_cli parameters : $MgmtCLI_Delete_OpParms"
+    echo "  and dump to $OutputPath"
+    echo
+    
+    mgmt_cli add $APICLIobjecttype --batch $APICLIImportCSVfile $MgmtCLI_Add_OpParms > $OutputPath
+
+# -------------------------------------------------------------------------------------------------
+
+    export MgmtCLI_Base_OpParms="--format json -s $APICLIsessionfile"
+    export MgmtCLI_IgnoreErr_OpParms="ignore-warnings true ignore-errors true --ignore-errors true"
+    
+    export MgmtCLI_Set_OpParms="$MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
+
+    echo "Import and set $APICLIobjecttype $APICLICSVobjecttype from CSV File : $APICLIImportCSVfile"
+    echo "  mgmt_cli parameters : $MgmtCLI_Set_OpParms"
+    echo "  and dump to $OutputPath"
+    echo
+    
+    mgmt_cli set $APICLIobjecttype --batch $APICLIImportCSVfile MgmtCLI_Set_OpParms > $OutputPath
+
+# -------------------------------------------------------------------------------------------------
+
+
+# -------------------------------------------------------------------------------------------------
+
+
+

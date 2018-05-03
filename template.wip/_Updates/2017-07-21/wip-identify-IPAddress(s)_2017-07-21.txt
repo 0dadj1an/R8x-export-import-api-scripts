@@ -1,0 +1,94 @@
+﻿[Expert@CORE-G2-Mgmt-1:0]# history
+    1  unset TMOUT
+    2  cd /var/cli_api_ops/
+    3  nslookup 127.0.0.1
+    4  nslookup 10.69.248.1
+    5  hostname
+    6  nslookup 10.69.248.201
+    7  ifconifg
+    8  ifconfig
+    9  ifconfig --help
+   10  ifconfig -a inet
+   11  ifconfig -a inet 10.69.248.1
+   12  ifconfig inet 10.69.248.201
+   13  ifconfig 10.69.248.201
+   14  ifconfig inet 10.69.248.201
+   15  ifconfig | awk '/inet addr/{print substr($2,6)}'
+   16  ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'
+   17  ip addr | grep 'state UP' -A2
+   18  ip addr
+   19  ip addr --help
+   20  ip --help
+   21  ip addr | grep 'state UP' -A2 | tail -n1 | awk -F'[/ ]+' '{print $3}'
+   22  ip addr | grep 'UP' -A2 | tail -n1 | awk -F'[/ ]+' '{print $3}'
+   23  export test_bool="false";echo $test_bool
+   24  echo false
+   25  echo not $test_bool
+   26  echo "not $test_bool"
+   27  echo ""not $test_bool"test_bool"
+   28  echo "$test_bool"test_bool"test_bool"
+   29  echo "$test_bool"test_bool"test_bool"{test_bool}
+   30  # MODIFIED 2017-07-21 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+   31  getapiversion=$(mgmt_cli show api-versions --format json -r true | $CPDIR/jq/jq '.["current-version"]' -r)
+   32  export checkapiversion=$getapiversion
+   33  if [ $checkapiversion = null ] ; then     currentapiversion=1.0; else     currentapiversion=$checkapiversion; fi
+   34  echo 'API version = '$currentapiversion
+   35  echo
+   36  mgmt_cli --help > null ; echo $?
+   37  mgmt_cli > null ; echo $?
+   38  mgmt_cli -?
+   39  mgmt_cli help
+   40  mgmt_cli -v
+   41  mgmt_cli --version
+   42  history
+
+[Expert@CORE-G2-Mgmt-1:0]# ip addr | grep 'UP' -A2 | tail -n1 | awk -F'[/ ]+' '{print $3}'
+10.69.248.201
+
+[Expert@beasley4800-01:0]# ip addr | grep 'UP' -A2 | tail -n1 | awk -F'[/ ]+' '{print $3}'
+10.80.3.254
+
+[Expert@CORE_Management_Server:0]# ip addr | grep 'UP' -A2 | tail -n1 | awk -F'[/ ]+' '{print $3}'
+10.69.248.212
+[Expert@CORE_Management_Server:0]#
+
+
+[Expert@beasley4800-01:0]# ip addr | grep 'UP' -A2 | awk -F'[/ ]+' '{print $3}'
+<LOOPBACK,UP,LOWER_UP>
+loopback
+127.0.0.1
+
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+<BROADCAST,MULTICAST>
+
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.99.255.248
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.69.251.248
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+50.79.16.168
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.1.11.254
+
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.44.47.254
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.55.55.254
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.33.33.254
+<BROADCAST,MULTICAST,UP,LOWER_UP>
+ether
+10.80.3.254
+[Expert@beasley4800-01:0]#
