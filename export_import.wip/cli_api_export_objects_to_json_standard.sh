@@ -3,7 +3,7 @@
 # SCRIPT Object export to JSON (standard details) file for API CLI Operations
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-03
+ScriptDate=2018-05-04
 
 #
 
@@ -31,6 +31,103 @@ export DATE=`date +%Y-%m-%d-%H%M%Z`
 export DATEDTGS=`date +%Y-%m-%d-%H%M%S%Z`
 
 export APICLIlogfilepath=/var/tmp/$ScriptName'_'$APIScriptVersion'_'$DATEDTGS.log
+
+# Configure basic information for formation of file path for command line parameter handler script
+#
+# cli_api_cmdlineparm_handler_root - root path to command line parameter handler script
+# cli_api_cmdlineparm_handler_folder - folder for under root path to command line parameter handler script
+# cli_api_cmdlineparm_handler_file - filename, without path, for command line parameter handler script
+#
+export cli_api_cmdlineparm_handler_root=.
+export cli_api_cmdlineparm_handler_folder=common
+export cli_api_cmdlineparm_handler_file=cmd_line_parameters_handler.action.common.005.v00.29.00.sh
+
+# -------------------------------------------------------------------------------------------------
+# Root script declarations
+# -------------------------------------------------------------------------------------------------
+
+# ADDED 2018-05-03 -
+
+# ================================================================================================
+# NOTE:  
+#   DefaultMgmtAdmin value is used to set the APICLIadmin value in the setup for logon.  This is
+#   the default fall back value if the --user parameter is not used to set the actual management 
+#   server admininstrator name.  This value should be set to the organizational standard to
+#   simplify operation, since it is the default that is used for mgmt_cli login user, where the
+#   password must still be entered
+# ================================================================================================
+
+#export DefaultMgmtAdmin=admin
+export DefaultMgmtAdmin=administrator
+
+
+# 2018-05-02 - script type - export objects to JSON standard
+
+export script_use_publish="false"
+
+export script_use_export="true"
+export script_use_import="false"
+export script_use_delete="false"
+export script_use_csvfile="false"
+
+export script_dump_csv="false"
+export script_dump_json="true"
+export script_dump_standard="true"
+export script_dump_full="false"
+
+export script_uses_wip="true"
+export script_uses_wip_json="false"
+
+# Wait time in seconds
+export WAITTIME=15
+
+
+# -------------------------------------------------------------------------------------------------
+# Set parameters for Main operations
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+export FileExtJSON=json
+export FileExtCSV=csv
+export FileExtTXT=txt
+
+export APICLIfileexportpre=dump_
+
+export APICLIfileexportext=$FileExtJSON
+export APICLIfileexportsuffix=$DATE'.'$APICLIfileexportext
+
+export APICLICSVfileexportext=$FileExtCSV
+export APICLICSVfileexportsuffix='.'$APICLICSVfileexportext
+
+export APICLIJSONfileexportext=$FileExtJSON
+export APICLIJSONfileexportsuffix='.'$APICLIJSONfileexportext
+
+export APICLIObjectLimit=500
+
+# Configure basic information for formation of file path for action handler scripts
+#
+# APIScriptActionFileRoot - root path to for action handler scripts
+# APIScriptActionFileFolder - folder under root path to for action handler scripts
+# APIScriptActionFilePath - path, for action handler scripts
+#
+export APIScriptActionFileRoot=.
+export APIScriptActionFileFolder=
+
+export APIScriptActionFilePrefix=cli_api_export_objects
+
+export APIScriptJSONActionFilename=$APIScriptActionFilePrefix'_actions'.sh
+#export APIScriptJSONActionFilename=$APIScriptActionFilePrefix'_actions_'$APIScriptVersion.sh
+
+export APIScriptCSVActionFilename=$APIScriptActionFilePrefix'_actions_to_csv'.sh
+#export APIScriptCSVActionFilename=$APIScriptActionFilePrefix'_actions_to_csv_'$APIScriptVersion.sh
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
+
+# -------------------------------------------------------------------------------------------------
+
 
 # =================================================================================================
 # END:  Setup Root Parameters
@@ -74,6 +171,10 @@ ConfigureJQLocation () {
         export JQ=/opt/CPshrd-R80/jq/jq
     else
         echo "Missing jq, not found in ${CPDIR}/jq/jq or /opt/CPshrd-R80/jq/jq" | tee -a -i $APICLIlogfilepath
+        echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         exit 1
     fi
     
@@ -196,7 +297,10 @@ export checkapiversion=
 
 ScriptAPIVersionCheck
 
-export APISCRIPTVERBOSE=false
+# We want to leave som externally set variables as they were
+#
+#export APISCRIPTVERBOSE=false
+
 export APISCRIPTVERBOSECHECK=false
 
 CheckAPIScriptVerboseOutput
@@ -208,57 +312,17 @@ CheckAPIScriptVerboseOutput
 # =================================================================================================
 
 
-# -------------------------------------------------------------------------------------------------
-# Root script declarations
-# -------------------------------------------------------------------------------------------------
-
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
-
-# 2018-05-02 - script type - export objects to JSON standard
-
-export script_use_publish="false"
-
-export script_use_export="true"
-export script_use_import="false"
-export script_use_delete="false"
-export script_use_csvfile="false"
-
-export script_dump_csv="false"
-export script_dump_json="true"
-export script_dump_standard="true"
-export script_dump_full="false"
-
-export script_uses_wip="true"
-
-# Wait time in seconds
-export WAITTIME=15
-
-#
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
-
-export APIScriptActionFilePrefix=cli_api_export_objects
-#export APIScriptJSONActionFile=$APIScriptActionFilePrefix'_actions_'$APIScriptVersion.sh
-#export APIScriptCSVActionFile=$APIScriptActionFilePrefix'_actions_to_csv_'$APIScriptVersion.sh
-export APIScriptJSONActionFile=$APIScriptActionFilePrefix'_actions'.sh
-export APIScriptCSVActionFile=$APIScriptActionFilePrefix'_actions_to_csv'.sh
-
-
 # =================================================================================================
 # =================================================================================================
 # START:  Command Line Parameter Handling and Help
 # =================================================================================================
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 
-# Code template for parsing command line parameters using only portable shell
-# code, while handling both long and short params, handling '-f file' and
-# '-f=file' style param data and also capturing non-parameters to be inserted
-# back into the shell positional parameters.
 #
-# Standard Command Line Parameters
+# Standard R8X API Scripts Command Line Parameters
 #
 # -? | --help
 # -v | --verbose
@@ -282,6 +346,12 @@ export APIScriptCSVActionFile=$APIScriptActionFilePrefix'_actions_to_csv'.sh
 # --NSO | --no-system-objects
 # --SO | --system-objects
 #
+# --NOWAIT
+#
+# --CLEANUPWIP
+# --NODOMAINFOLDERS
+# --CSVEXPORTADDIGNOREERR
+#
 
 export SHOWHELP=false
 export CLIparm_websslport=443
@@ -302,142 +372,212 @@ export CLIparm_csvpath=
 
 export CLIparm_NoSystemObjects=true
 
+export CLIparm_NOWAIT=
+export CLIparm_CLEANUPWIP=
+export CLIparm_NODOMAINFOLDERS=
+export CLIparm_CSVEXPORTADDIGNOREERR=
+
+# --NOWAIT
+#
+if [ -z "$NOWAIT" ]; then
+    # NOWAIT mode not set from shell level
+    export CLIparm_NOWAIT=false
+elif [ x"`echo "$NOWAIT" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # NOWAIT mode set OFF from shell level
+    export CLIparm_NOWAIT=false
+elif [ x"`echo "$NOWAIT" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # NOWAIT mode set ON from shell level
+    export CLIparm_NOWAIT=true
+else
+    # NOWAIT mode set to wrong value from shell level
+    export CLIparm_NOWAIT=false
+fi
+
+# --CLEANUPWIP
+#
+if [ -z "$CLEANUPWIP" ]; then
+    # CLEANUPWIP mode not set from shell level
+    export CLIparm_CLEANUPWIP=false
+elif [ x"`echo "$CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # CLEANUPWIP mode set OFF from shell level
+    export CLIparm_CLEANUPWIP=false
+elif [ x"`echo "$CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # CLEANUPWIP mode set ON from shell level
+    export CLIparm_CLEANUPWIP=true
+else
+    # CLEANUPWIP mode set to wrong value from shell level
+    export CLIparm_CLEANUPWIP=false
+fi
+
+# --NODOMAINFOLDERS
+#
+if [ -z "$NODOMAINFOLDERS" ]; then
+    # NODOMAINFOLDERS mode not set from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+elif [ x"`echo "$NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # NODOMAINFOLDERS mode set OFF from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+elif [ x"`echo "$NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # NODOMAINFOLDERS mode set ON from shell level
+    export CLIparm_NODOMAINFOLDERS=true
+else
+    # NODOMAINFOLDERS mode set to wrong value from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+fi
+
+# --CSVEXPORTADDIGNOREERR
+#
+if [ -z "$CSVEXPORTADDIGNOREERR" ]; then
+    # CSVEXPORTADDIGNOREERR mode not set from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=false
+elif [ x"`echo "$CSVEXPORTADDIGNOREERR" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # CSVEXPORTADDIGNOREERR mode set OFF from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=false
+elif [ x"`echo "$CSVEXPORTADDIGNOREERR" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # CSVEXPORTADDIGNOREERR mode set ON from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=true
+else
+    # CLEANUPWIP mode set to wrong value from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=false
+fi
+
 export REMAINS=
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
+# =================================================================================================
 # -------------------------------------------------------------------------------------------------
-# dumpcliparmparseresults
+# START:  Local Help display proceedure
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
-dumpcliparmparseresults () {
+# Show local help information.  Add script specific information here to show when help requested
 
-	#
-	# Testing - Dump aquired values
-	#
+doshowlocalhelp () {
     #
     # Screen width template for sizing, default width of 80 characters assumed
     #
-    #                                    1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #                          01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-    export outstring=
-    #export outstring=$outstring"After: \n "
-    export outstring=$outstring"CLIparm_rootuser        ='$CLIparm_rootuser' \n "
-    export outstring=$outstring"CLIparm_user            ='$CLIparm_user' \n "
-    export outstring=$outstring"CLIparm_password        ='$CLIparm_password' \n "
-    
-    export outstring=$outstring"CLIparm_websslport      ='$CLIparm_websslport' \n "
-    export outstring=$outstring"CLIparm_mgmt            ='$CLIparm_mgmt' \n "
-    export outstring=$outstring"CLIparm_domain          ='$CLIparm_domain' \n "
-    export outstring=$outstring"CLIparm_sessionidfile   ='$CLIparm_sessionidfile' \n "
-    export outstring=$outstring"CLIparm_logpath         ='$CLIparm_logpath' \n "
-    export outstring=$outstring"CLIparm_outputpath      ='$CLIparm_outputpath' \n "
-    
-    if [ x"$script_use_export" = x"true" ] ; then
-        export outstring=$outstring"CLIparm_exportpath      ='$CLIparm_exportpath' \n "
-    fi
-    if [ x"$script_use_import" = x"true" ] ; then
-        export outstring=$outstring"CLIparm_importpath      ='$CLIparm_importpath' \n "
-    fi
-    if [ x"$script_use_delete" = x"true" ] ; then
-        export outstring=$outstring"CLIparm_deletepath      ='$CLIparm_deletepath' \n "
-    fi
-    if [ x"$script_use_csvfile" = x"true" ] ; then
-        export outstring=$outstring"CLIparm_csvpath         ='$CLIparm_csvpath' \n "
-    fi
-    
-    export outstring=$outstring"CLIparm_NoSystemObjects ='$CLIparm_NoSystemObjects' \n "
-	
-    export outstring=$outstring"SHOWHELP                ='$SHOWHELP' \n "
-    export outstring=$outstring"APISCRIPTVERBOSE        ='$APISCRIPTVERBOSE' \n "
-    export outstring=$outstring"remains                 ='$REMAINS'"
-    
-	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-	    # Verbose mode ON
-	    
-	    echo | tee -a -i $APICLIlogfilepath
-	    echo -e $outstring | tee -a -i $APICLIlogfilepath
-	    echo | tee -a -i $APICLIlogfilepath
-	    for i ; do echo - $i | tee -a -i $APICLIlogfilepath ; done
-	    echo CLI parms - number $# parms $@ | tee -a -i $APICLIlogfilepath
-	    echo | tee -a -i $APICLIlogfilepath
-        
-    else
-	    # Verbose mode ON
-	    
-	    echo >> $APICLIlogfilepath
-	    echo -e $outstring >> $APICLIlogfilepath
-	    echo >> $APICLIlogfilepath
-	    for i ; do echo - $i >> $APICLIlogfilepath ; done
-	    echo CLI parms - number $# parms $@ >> $APICLIlogfilepath
-	    echo >> $APICLIlogfilepath
-        
-	fi
+    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+    echo
 
+
+    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+    echo
+    
+    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+    echo
+    return 1
 }
 
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03
+
+# -------------------------------------------------------------------------------------------------
+# END:  Local Help display proceedure
+# -------------------------------------------------------------------------------------------------
+# =================================================================================================
+
+# -------------------------------------------------------------------------------------------------
+# CommandLineParameterHandler - Command Line Parameter Handler calling routine
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+CommandLineParameterHandler () {
+    #
+    # CommandLineParameterHandler - Command Line Parameter Handler calling routine
+    #
+    
+    echo | tee -a -i $APICLIlogfilepath
+    echo '--------------------------------------------------------------------------' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Calling external Command Line Paramenter Handling Script" | tee -a -i $APICLIlogfilepath
+    echo " - External Script : "$cli_api_cmdlineparm_handler | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    
+    . $cli_api_cmdlineparm_handler "$@"
+    
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Returned from external Command Line Paramenter Handling Script" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    
+    if [ "$APISCRIPTVERBOSE" = "true" ] && [ "$NOWAIT" != "true" ] ; then
+        echo
+        read -t $WAITTIME -n 1 -p "Any key to continue.  Automatic continue after $WAITTIME seconds : " anykey
+    fi
+    
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Starting local execution" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo '--------------------------------------------------------------------------' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    
+}
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
 
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------------------
 # Call command line parameter handler action script
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-03-3 -
 
-# MODIFIED 2018-05-02 -
-export cli_api_cmdlineparm_handler=cmd_line_parameters_handler.action.common.005.v00.29.00.sh
+export cli_api_cmdlineparm_handler_path=$cli_api_cmdlineparm_handler_root/$cli_api_cmdlineparm_handler_folder
 
-echo | tee -a -i $APICLIlogfilepath
-echo '--------------------------------------------------------------------------' | tee -a -i $APICLIlogfilepath
-echo | tee -a -i $APICLIlogfilepath
-echo "Calling external Command Line Paramenter Handling Script" | tee -a -i $APICLIlogfilepath
-echo | tee -a -i $APICLIlogfilepath
+export cli_api_cmdlineparm_handler=$cli_api_cmdlineparm_handler_path/$cli_api_cmdlineparm_handler_file
 
-. ./$cli_api_cmdlineparm_handler "$@"
+# Check that we can finde the command line parameter handler file
+#
+if [ ! -r $cli_api_cmdlineparm_handler ] ; then
+    # no file found, that is a problem
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Command Line Parameter hander script file missing' | tee -a -i $APICLIlogfilepath
+    echo '  File not found : '$cli_api_cmdlineparm_handler | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Other parameter elements : ' | tee -a -i $APICLIlogfilepath
+    echo '  Root of folder path : '$cli_api_cmdlineparm_handler_root | tee -a -i $APICLIlogfilepath
+    echo '  Folder in Root path : '$cli_api_cmdlineparm_handler_folder | tee -a -i $APICLIlogfilepath
+    echo '  Folder Root path    : '$cli_api_cmdlineparm_handler_path | tee -a -i $APICLIlogfilepath
+    echo '  Script Filename     : '$cli_api_cmdlineparm_handler_file | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
 
-echo | tee -a -i $APICLIlogfilepath
-echo "Returned from external Command Line Paramenter Handling Script" | tee -a -i $APICLIlogfilepath
-echo | tee -a -i $APICLIlogfilepath
-
-dumpcliparmparseresults "$@"
-
-if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-    echo
-    read -t $WAITTIME -n 1 -p "Any key to continue : " anykey
+    exit 251
 fi
 
-echo | tee -a -i $APICLIlogfilepath
-echo "Starting local execution" | tee -a -i $APICLIlogfilepath
-echo | tee -a -i $APICLIlogfilepath
-echo '--------------------------------------------------------------------------' | tee -a -i $APICLIlogfilepath
-echo | tee -a -i $APICLIlogfilepath
+# MODIFIED 2018-05-03-3 -
 
+CommandLineParameterHandler "$@"
 
-#
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
 
 # -------------------------------------------------------------------------------------------------
-# Handle request for help and exit
+# Local Handle request for help and exit
 # -------------------------------------------------------------------------------------------------
 
 # MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
-# Was help requested, if so show it and exit
+# Was help requested, if so show local content and exit
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
-    # Show Help
-    # Done in external Script now
-    #doshowhelp
+    # Show Local Help
+    doshowlocalhelp
     exit 255 
 fi
 
@@ -482,7 +622,7 @@ fi
 
 # =================================================================================================
 # =================================================================================================
-# START:  Setup Login Parameters and Login to Mgmt_CLI
+# START:  Setup Login Parameters and Mgmt_CLI handler procedures
 # =================================================================================================
 
 
@@ -542,6 +682,7 @@ HandleMgmtCLILogout () {
     mgmt_cli logout -s $APICLIsessionfile | tee -a -i $APICLIlogfilepath
     
     rm $APICLIsessionfile | tee -a -i $APICLIlogfilepath
+    rm $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
     
     return 0
 }
@@ -553,7 +694,7 @@ HandleMgmtCLILogout () {
 # HandleMgmtCLILogin - Login to the API via mgmt_cli login
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02-2 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04-3 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
@@ -568,41 +709,53 @@ HandleMgmtCLILogin () {
     export loginstring=
     export loginparmstring=
     
-    if [ x"$CLIparm_sessionidfile" != x"" ] ; then
+# MODIFIED 2018-05-04 -
+    export APICLIsessionerrorfile=id.`date +%Y%m%d-%H%M%S%Z`.err
+
+# MODIFIED 2018-05-03 -
+    if [ ! -z "$CLIparm_sessionidfile" ] ; then
+        # CLIparm_sessionidfile value is set so use it
         export APICLIsessionfile=$CLIparm_sessionidfile
     else
-        export APICLIsessionfile=id.txt
+        # Updated to make session id file unique in case of multiple admins running script from same folder
+        export APICLIsessionfile=id.`date +%Y%m%d-%H%M%S%Z`.txt
     fi
 
+# MODIFIED 2018-05-03 -
     export domainnamenospace=
-    if [ x"$domaintarget" != x"" ] ; then
-        # Handle domain name that might include space
+    if [ ! -z "$domaintarget" ] ; then
+        # Handle domain name that might include space if the value is set
         #export domainnamenospace="$(echo -e "${domaintarget}" | tr -d '[:space:]')"
-        export domainnamenospace=$(echo -e ${domaintarget} | tr -d '[:space:]')
+        #export domainnamenospace=$(echo -e ${domaintarget} | tr -d '[:space:]')
+        export domainnamenospace=$(echo -e ${domaintarget} | tr ' ' '_')
     else
         export domainnamenospace=
     fi
     
-    if [ x"$domainnamenospace" != x"" ] ; then
-        if [ x"$CLIparm_sessionidfile" != x"" ] ; then
+    if [ ! -z "$domainnamenospace" ] ; then
+        # Handle domain name that might include space
+        if [ ! -z "$CLIparm_sessionidfile" ] ; then
+            # adjust if CLIparm_sessionidfile was set, since that might be a complete path, append the path to it 
             export APICLIsessionfile=$APICLIsessionfile.$domainnamenospace
         else
+            # assume the session file is set to a local file and prefix the domain to it
             export APICLIsessionfile=$domainnamenospace.$APICLIsessionfile
         fi
     fi
     
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'APICLIwebsslport  :  '$APICLIwebsslport | tee -a -i $APICLIlogfilepath
+    echo 'Domain Target     :  '$domaintarget | tee -a -i $APICLIlogfilepath
+    echo 'Domain no space   :  '$domainnamenospace | tee -a -i $APICLIlogfilepath
+    echo 'APICLIsessionfile :  '$APICLIsessionfile | tee -a -i $APICLIlogfilepath
+    
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'mgmt_cli Login!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+
     if [ x"$CLIparm_rootuser" = x"true" ] ; then
         # Handle if ROOT User -r true parameter
         
-        #
-        # Testing - Dump aquired values
-        #
-        echo 'APICLIsessionfile :  '$APICLIsessionfile | tee -a -i $APICLIlogfilepath
-        echo | tee -a -i $APICLIlogfilepath
-        
-        echo | tee -a -i $APICLIlogfilepath
-        echo 'mgmt_cli Login!' | tee -a -i $APICLIlogfilepath
-        echo | tee -a -i $APICLIlogfilepath
         echo 'Login to mgmt_cli as root user -r true and save to session file :  '$APICLIsessionfile | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
         
@@ -629,8 +782,9 @@ HandleMgmtCLILogin () {
                 echo | tee -a -i $APICLIlogfilepath
             fi
             
-            mgmt_cli login -r true domain "$domaintarget" --port $APICLIwebsslport > $APICLIsessionfile
+            mgmt_cli login -r true domain "$domaintarget" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
             EXITCODE=$?
+            cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
         else
             #
             # Testing - Dump login string built from parameters
@@ -640,22 +794,13 @@ HandleMgmtCLILogin () {
                 echo
             fi
             
-            mgmt_cli login -r true --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+            mgmt_cli login -r true --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
             EXITCODE=$?
+            cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
         fi
     else
         # Handle User
     
-        #
-        # Testing - Dump aquired values
-        #
-        echo 'APICLIadmin       :  '$APICLIadmin | tee -a -i $APICLIlogfilepath
-        echo 'APICLIsessionfile :  '$APICLIsessionfile | tee -a -i $APICLIlogfilepath
-        echo | tee -a -i $APICLIlogfilepath
-        
-        echo | tee -a -i $APICLIlogfilepath
-        echo 'mgmt_cli Login!' | tee -a -i $APICLIlogfilepath
-        echo | tee -a -i $APICLIlogfilepath
         echo 'Login to mgmt_cli as '$APICLIadmin' and save to session file :  '$APICLIsessionfile | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
         
@@ -690,8 +835,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" domain "$domaintarget" -m "$CLIparm_mgmt" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" domain "$domaintarget" -m "$CLIparm_mgmt" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 else
                     #
                     # Testing - Dump login string built from parameters
@@ -701,8 +847,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" domain "$domaintarget" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" domain "$domaintarget" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 fi
             else
                 # Handle management server parameter for mgmt_cli parms
@@ -718,8 +865,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" -m "$CLIparm_mgmt" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" -m "$CLIparm_mgmt" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 else
                     #
                     # Testing - Dump login string built from parameters
@@ -729,8 +877,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin password "$CLIparm_password" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 fi
             fi
         else
@@ -753,8 +902,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin domain "$domaintarget" -m "$CLIparm_mgmt" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin domain "$domaintarget" -m "$CLIparm_mgmt" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 else
                     #
                     # Testing - Dump login string built from parameters
@@ -764,8 +914,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin domain "$domaintarget" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin domain "$domaintarget" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 fi
             else
                 # Handle management server parameter for mgmt_cli parms
@@ -781,8 +932,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin -m "$CLIparm_mgmt" --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin -m "$CLIparm_mgmt" --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 else
                     #
                     # Testing - Dump login string built from parameters
@@ -792,8 +944,9 @@ HandleMgmtCLILogin () {
                         echo | tee -a -i $APICLIlogfilepath
                     fi
                     
-                    mgmt_cli login user $APICLIadmin --port $APICLIwebsslport | tee -a -i $APICLIlogfilepath > $APICLIsessionfile
+                    mgmt_cli login user $APICLIadmin --port $APICLIwebsslport > $APICLIsessionfile 2>> $APICLIsessionerrorfile
                     EXITCODE=$?
+                    cat $APICLIsessionerrorfile | tee -a -i $APICLIlogfilepath
                 fi
             fi
         fi
@@ -812,195 +965,335 @@ HandleMgmtCLILogin () {
         
         echo "mgmt_cli login success!" | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
-        cat $APICLIsessionfile
+        cat $APICLIsessionfile | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         
     fi
 
-    echo
     return 0
 }
 
 #
-# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-02-2
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-04-3
 
 # -------------------------------------------------------------------------------------------------
+# SetupLogin2MgmtCLI - Setup Login to Management CLI
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02-2 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
-export APICLIwebsslport=443
-if [ x"$CLIparm_websslport" != x"" ] ; then
-    export APICLIwebsslport=$CLIparm_websslport
-else
+SetupLogin2MgmtCLI () {
+    #
+    # setup the mgmt_cli login fundamentals
+    #
+    
     export APICLIwebsslport=443
-fi
+    if [ ! -z "$CLIparm_websslport" ] ; then
+        export APICLIwebsslport=$CLIparm_websslport
+    else
+        export APICLIwebsslport=443
+    fi
+    
+    # MODIFIED 2018-05-03 -
 
-# ================================================================================================
-# NOTE:  APICLIadmin value must be set to operate this script, removing this varaiable will lead
-#        to logon failure with mgmt_cli logon.  Root User (-r) parameter is handled differently,
-#        so DO NOT REMOVE OR CLEAR this variable.  Adjust the export APICLIadmin= line to reflect
-#        the default administrator name for the environment
-# ================================================================================================
-if [ x"$CLIparm_user" != x"" ] ; then
-    export APICLIadmin=$CLIparm_user
-else
-    export APICLIadmin=administrator
-    #export APICLIadmin=admin
-fi
-
-export mgmttarget=
-
-export domaintarget=
-if [ x"$CLIparm_domain" != x"" ] ; then
-    # Handle domain parameter for login string
-    export domaintarget=$CLIparm_domain
-else
+    # ================================================================================================
+    # NOTE:  APICLIadmin value must be set to operate this script, removing this varaiable will lead
+    #        to logon failure with mgmt_cli logon.  Root User (-r) parameter is handled differently,
+    #        so DO NOT REMOVE OR CLEAR this variable.  Adjust the export APICLIadmin= line to reflect
+    #        the default administrator name for the environment
+    #
+    #        The value for APICLIadmin now is set by the value of DefaultMgmtAdmin found at the top 
+    #        of the script in the 'Root script declarations' section.
+    #
+    # ================================================================================================
+    if [ ! -z "$CLIparm_user" ] ; then
+        export APICLIadmin=$CLIparm_user
+    elif [ ! -z "$DefaultMgmtAdmin" ] ; then
+        export APICLIadmin=$DefaultMgmtAdmin
+    else
+        #export APICLIadmin=administrator
+        #export APICLIadmin=admin
+        export APICLIadmin=$DefaultMgmtAdmin
+    fi
+    
+    # Clear variables that need to be set later
+    
+    export mgmttarget=
     export domaintarget=
-fi
-
-HandleMgmtCLILogin
-SUBEXITCODE=$?
-
-if [ "$SUBEXITCODE" != "0" ] ; then
-
-    echo | tee -a -i $APICLIlogfilepath
-    echo "Terminating script..." | tee -a -i $APICLIlogfilepath
-    echo "Exitcode $SUBEXITCODE" | tee -a -i $APICLIlogfilepath
-    echo | tee -a -i $APICLIlogfilepath
-    exit $SUBEXITCODE
-
-else
-    echo | tee -a -i $APICLIlogfilepath
-fi
+    
+    return 0
+}
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02-2
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+
+# -------------------------------------------------------------------------------------------------
+# Login2MgmtCLI - Process Login to Management CLI
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+Login2MgmtCLI () {
+    #
+    # Execute the mgmt_cli login and address results
+    #
+
+    HandleMgmtCLILogin
+    SUBEXITCODE=$?
+    
+    if [ "$SUBEXITCODE" != "0" ] ; then
+    
+        echo | tee -a -i $APICLIlogfilepath
+        echo "Terminating script..." | tee -a -i $APICLIlogfilepath
+        echo "Exitcode $SUBEXITCODE" | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        exit $SUBEXITCODE
+    
+    else
+        echo | tee -a -i $APICLIlogfilepath
+    fi
+    
+    return 0
+}
+
+#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 # =================================================================================================
-# END:  Setup Login Parameters and Login to Mgmt_CLI
+# END:  Setup Login Parameters and Mgmt_CLI handler procedures
 # =================================================================================================
 # =================================================================================================
 
 # =================================================================================================
 # =================================================================================================
-# START:  Setup CLI Parameters
+# START:  Setup CLI Parameter based values
 # =================================================================================================
 
+# =================================================================================================
+# START:  Common Procedures
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureRootPath - Configure root and base path
+# -------------------------------------------------------------------------------------------------
+
+ConfigureRootPath () {
+
+    # ---------------------------------------------------------
+    # Create the base path and directory structure for output
+    # ---------------------------------------------------------
+    
+    export APICLIpathroot=./dump
+    if [ x"$CLIparm_outputpath" != x"" ] ; then
+        export APICLIpathroot=$CLIparm_outputpath
+    else
+        export APICLIpathroot=./dump
+    fi
+    
+    if [ ! -r $APICLIpathroot ] ; then
+        mkdir $APICLIpathroot
+    fi
+    
+    export APICLIpathbase=$APICLIpathroot/$DATE
+    
+    if [ ! -r $APICLIpathbase ] ; then
+        mkdir $APICLIpathbase
+    fi
+    
+    return 0
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureLogPath - Configure log file path and handle temporary log file
+# -------------------------------------------------------------------------------------------------
+
+ConfigureLogPath () {
+
+    # ---------------------------------------------------------
+    # Create the base path and directory structure for logging
+    # ---------------------------------------------------------
+    
+    if [ x"$CLIparm_logpath" != x"" ] ; then
+        export APICLIlogpathroot=$CLIparm_logpath
+    else
+        export APICLIlogpathroot=$APICLIpathroot
+    fi
+    
+    if [ ! -r $APICLIlogpathroot ] ; then
+        mkdir $APICLIlogpathroot
+    fi
+    
+    export APICLIlogpathbase=$APICLIlogpathroot/$DATE
+    
+    if [ ! -r $APICLIlogpathbase ] ; then
+        mkdir $APICLIlogpathbase
+    fi
+    
+    export APICLIlogfilepathtemp=$APICLIlogfilepath
+    export APICLIlogfilepath=$APICLIlogpathbase/$ScriptName'_'$APIScriptVersion'_'$DATEDTGS.log
+    
+    cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
+    rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
+    
+    return 0
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureCommonCLIParameterValues - Configure Common CLI Parameter Values
+# -------------------------------------------------------------------------------------------------
+
+ConfigureCommonCLIParameterValues () {
+
+    #
+    # Configure Common CLI Parameter Values
+    #
+    
+    ConfigureRootPath
+
+    ConfigureLogPath
+    
+    return 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# END:  Common Procedures
+# =================================================================================================
+
+# =================================================================================================
+# START:  Specific Procedures
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureOtherCLIParameterPaths - Configure other path and folder values based on CLI parameters
+# -------------------------------------------------------------------------------------------------
+
+ConfigureOtherCLIParameterPaths () {
+
+    # ---------------------------------------------------------
+    # Setup other paths we may need - but these should not create folders (yet)
+    # Configure other path and folder values based on CLI parameters
+    # ---------------------------------------------------------
+    
+    export APICLICSVExportpathbase=
+    if [ x"$script_use_export" = x"true" ] ; then
+        if [ x"$CLIparm_exportpath" != x"" ] ; then
+            export APICLICSVExportpathbase=$CLIparm_exportpath
+        else
+            export APICLICSVExportpathbase=$APICLIpathbase
+        fi
+    fi
+    
+    export APICLICSVImportpathbase=
+    if [ x"$script_use_import" = x"true" ] ; then
+        if [ x"$CLIparm_importpath" != x"" ] ; then
+            export APICLICSVImportpathbase=$CLIparm_importpath
+        else
+            export APICLICSVImportpathbase=./import.csv
+        fi
+    fi
+    
+    export APICLICSVDeletepathbase=
+    if [ x"$script_use_delete" = x"true" ] ; then
+        if [ x"$CLIparm_deletepath" != x"" ] ; then
+            export APICLICSVDeletepathbase=$CLIparm_deletepath
+        else
+            export APICLICSVDeletepathbase=./delete.csv
+        fi
+    fi
+    
+    export APICLICSVcsvpath=
+    if [ x"$script_use_csvfile" = x"true" ] ; then
+        if [ x"$CLIparm_csvpath" != x"" ] ; then
+            export APICLICSVcsvpath=$CLIparm_csvpath
+        else
+            export APICLICSVcsvpath=./domains.csv
+        fi
+    fi
+    return 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureOtherCLIParameterValues - Configure other values based on CLI parameters
+# -------------------------------------------------------------------------------------------------
+
+ConfigureOtherCLIParameterValues () {
+
+    # ---------------------------------------------------------
+    # Setup other variables based on CLI parameters
+    # ---------------------------------------------------------
+    
+#    export NoSystemObjects=false
+    export NoSystemObjects=true
+    
+    export NoSystemObjectsValue=`echo "$CLIparm_NoSystemObjects" | tr '[:upper:]' '[:lower:]'`
+    
+#    if [ x"$NoSystemObjectsValue" = x"true" ] ; then
+#        export NoSystemObjects=true
+#    else
+#        export NoSystemObjects=false
+#    fi
+    
+    if [ x"$NoSystemObjectsValue" = x"false" ] ; then
+        export NoSystemObjects=false
+    else
+        export NoSystemObjects=true
+    fi
+    
+    return 0
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureSpecificCLIParameterValues - Configure Specific CLI Parameter Values
+# -------------------------------------------------------------------------------------------------
+
+ConfigureSpecificCLIParameterValues () {
+
+    #
+    # Configure Specific CLI Parameter Values
+    #
+    
+    ConfigureOtherCLIParameterPaths
+
+    ConfigureOtherCLIParameterValues
+
+    return 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# END:  Specific Procedures
+# =================================================================================================
 
 # -------------------------------------------------------------------------------------------------
 # Set parameters for Main operations - CLI
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-04-16 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
+ConfigureCommonCLIParameterValues
 
-# ---------------------------------------------------------
-# Create the base path and directory structure for output
-# ---------------------------------------------------------
-
-export APICLIpathroot=./dump
-if [ x"$CLIparm_outputpath" != x"" ] ; then
-    export APICLIpathroot=$CLIparm_outputpath
-else
-    export APICLIpathroot=./dump
-fi
-
-if [ ! -r $APICLIpathroot ] ; then
-    mkdir $APICLIpathroot
-fi
-
-export APICLIpathbase=$APICLIpathroot/$DATE
-
-if [ ! -r $APICLIpathbase ] ; then
-    mkdir $APICLIpathbase
-fi
-
-# ---------------------------------------------------------
-# Create the base path and directory structure for logging
-# ---------------------------------------------------------
-
-if [ x"$CLIparm_logpath" != x"" ] ; then
-    export APICLIlogpathroot=$CLIparm_logpath
-else
-    export APICLIlogpathroot=$APICLIpathroot
-fi
-
-if [ ! -r $APICLIlogpathroot ] ; then
-    mkdir $APICLIlogpathroot
-fi
-
-export APICLIlogpathbase=$APICLIlogpathroot/$DATE
-
-if [ ! -r $APICLIlogpathbase ] ; then
-    mkdir $APICLIlogpathbase
-fi
-
-export APICLIlogfilepathtemp=$APICLIlogfilepath
-export APICLIlogfilepath=$APICLIlogpathbase/$ScriptName'_'$APIScriptVersion'_'$DATEDTGS.log
-
-cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
-rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
-
-# ---------------------------------------------------------
-# Setup other paths we may need - but these should not creat folders (yet)
-# ---------------------------------------------------------
-
-export APICLICSVExportpathbase=
-if [ x"$script_use_export" = x"true" ] ; then
-    if [ x"$CLIparm_exportpath" != x"" ] ; then
-        export APICLICSVExportpathbase=$CLIparm_exportpath
-    else
-        export APICLICSVExportpathbase=$APICLIpathbase
-    fi
-fi
-
-export APICLICSVImportpathbase=
-if [ x"$script_use_import" = x"true" ] ; then
-    if [ x"$CLIparm_importpath" != x"" ] ; then
-        export APICLICSVImportpathbase=$CLIparm_importpath
-    else
-        export APICLICSVImportpathbase=./import.csv
-    fi
-fi
-
-export APICLICSVDeletepathbase=
-if [ x"$script_use_delete" = x"true" ] ; then
-    if [ x"$CLIparm_deletepath" != x"" ] ; then
-        export APICLICSVDeletepathbase=$CLIparm_deletepath
-    else
-        export APICLICSVDeletepathbase=./delete.csv
-    fi
-fi
-
-export APICLICSVcsvpath=
-if [ x"$script_use_csvfile" = x"true" ] ; then
-    if [ x"$CLIparm_csvpath" != x"" ] ; then
-        export APICLICSVcsvpath=$CLIparm_csvpath
-    else
-        export APICLICSVcsvpath=./domains.csv
-    fi
-fi
-
-# ---------------------------------------------------------
-# Setup other variables based on CLI parameters
-# ---------------------------------------------------------
-
-export NoSystemObjects=true
-
-export NoSystemObjectsValue=`echo "$CLIparm_NoSystemObjects" | tr '[:upper:]' '[:lower:]'`
-
-if [ x"$NoSystemObjectsValue" = x"false" ] ; then
-    export NoSystemObjects=false
-else
-    export NoSystemObjects=true
-fi
-
-#
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-04-16
+ConfigureSpecificCLIParameterValues
     
 # =================================================================================================
-# END:  Setup CLI Parameters
+# END:  Setup CLI Parameter based values
 # =================================================================================================
 # =================================================================================================
 
@@ -1016,63 +1309,58 @@ fi
 # Set parameters for Main operations - Other Path Values
 # -------------------------------------------------------------------------------------------------
 
-if [ x"$script_dump_csv" = x"true" ] ; then
-    export APICLIdumppathcsv=$APICLIpathbase/csv
-    #if [ ! -r $APICLIdumppathcsv ] ; then
-    #    mkdir $APICLIdumppathcsv
-    #fi
+if [ "$script_dump_csv" = "true" ] ; then
+    export APICLIdumppathcsv=$APICLICSVExportpathbase/csv
 fi
 
 if [ x"$script_dump_json" = x"true" ] ; then
-    export APICLIdumppathjson=$APICLIpathbase/json
-    #if [ ! -r $APICLIdumppathjson ] ; then
-    #    mkdir $APICLIdumppathjson
-    #fi
+    export APICLIdumppathjson=$APICLICSVExportpathbase/json
 fi
 
 if [ x"$script_dump_full" = x"true" ] ; then
-    export APICLIdumppathjsonfull=$APICLIpathbase/json/full
-    #if [ ! -r $APICLIdumppathjsonfull ] ; then
-    #    mkdir $APICLIdumppathjsonfull
-    #fi
+    export APICLIdumppathjsonfull=$APICLIdumppathjson/full
 fi
 
 if [ x"$script_dump_standard" = x"true" ] ; then
-    export APICLIdumppathjsonstandard=$APICLIpathbase/json/standard
-    #if [ ! -r $APICLIdumppathjsonstandard ] ; then
-    #    mkdir $APICLIdumppathjsonstandard
-    #fi
+    export APICLIdumppathjsonstandard=$APICLIdumppathjson/standard
 fi
 
-# -------------------------------------------------------------------------------------------------
-# Set parameters for Main operations
-# -------------------------------------------------------------------------------------------------
-
-# MODIFIED 2018-04-25 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
-
-export FileExtJSON=json
-export FileExtCSV=csv
-export FileExtTXT=txt
-
-export APICLIfileexportpre=dump_
-
-export APICLIfileexportext=$FileExtJSON
-export APICLIfileexportsuffix=$DATE'.'$APICLIfileexportext
-
-export APICLICSVfileexportext=$FileExtCSV
-export APICLICSVfileexportsuffix='.'$APICLICSVfileexportext
-
-export APICLIJSONfileexportext=$FileExtJSON
-export APICLIJSONfileexportsuffix='.'$APICLIJSONfileexportext
-
-#
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-04-25
-
-export APICLIObjectLimit=500
 
 # =================================================================================================
-# START:  Export objects to JSON
+# START:  Setup Login Parameters and Login to Mgmt_CLI
+# =================================================================================================
+
+
+SetupLogin2MgmtCLI
+
+if [ ! -z "$CLIparm_domain" ] ; then
+    # Handle domain parameter for login string
+    if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
+        echo 'Command line parameter for domain set!' | tee -a -i $APICLIlogfilepath
+    fi
+    export domaintarget=$CLIparm_domain
+else
+    if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
+        echo 'Command line parameter for domain NOT set!' | tee -a -i $APICLIlogfilepath
+    fi
+    export domaintarget=
+fi
+
+if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
+    outstring="domaintarget = '$domaintarget' " 
+    echo $outstring | tee -a -i $APICLIlogfilepath
+fi
+
+Login2MgmtCLI
+
+
+# =================================================================================================
+# END:  Setup Login Parameters and Login to Mgmt_CLI
+# =================================================================================================
+
+
+# =================================================================================================
+# START:  Export objects to JSON standard
 # =================================================================================================
 
 
@@ -1080,8 +1368,11 @@ export APICLIdetaillvl=standard
 
 #export APICLIdetaillvl=full
 
-# ADDED 2018-03-03 -
-export CLIparm_NoSystemObjects=false
+# ADDED 2018-05-04-2 -
+# Only changes this parameter to force the specific state of CLIparm_NoSystemObjects
+# since it is set using the command line parameters --SO (false) and --NSO (true)
+#
+#export CLIparm_NoSystemObjects=false
 
 # ADDED 2018-04-25 -
 export primarytargetoutputformat=$FileExtJSON
@@ -1091,38 +1382,132 @@ export primarytargetoutputformat=$FileExtJSON
 # -------------------------------------------------------------------------------------------------
 
 
-# MODIFIED 2018-04-25 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# -------------------------------------------------------------------------------------------------
+# Check that Action Handler Scripts exist before executing
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
+# Basic information for formation of file path for action handler scripts
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-04-25
-
-
-# MODIFIED 2018-04-25 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# APIScriptActionFileRoot - root path to for action handler scripts
+# APIScriptActionFileFolder - folder under root path to for action handler scripts
+# APIScriptActionFilePath - path, for action handler scripts
 #
+if [ ! -z "$APIScriptActionFileFolder" ] ; then
+    export APIScriptActionFilePath=$APIScriptActionFileRoot/$APIScriptActionFileFolder
+else
+    export APIScriptActionFilePath=$APIScriptActionFileRoot
+fi
+
+export APIScriptJSONActionFile=$APIScriptActionFilePath/$APIScriptJSONActionFilename
+export APIScriptCSVActionFile=$APIScriptActionFilePath/$APIScriptCSVActionFilename
+
+# Check that we can find the action handler scripts
+#
+if [ ! -r $APIScriptJSONActionFile ] ; then
+    # no file found, that is a problem
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'JSON Action Handler script file missing' | tee -a -i $APICLIlogfilepath
+    echo '  File not found : '$APIScriptJSONActionFile | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Other parameter elements : ' | tee -a -i $APICLIlogfilepath
+    echo '  Root of folder path : '$APIScriptActionFileRoot | tee -a -i $APICLIlogfilepath
+    echo '  Folder in Root path : '$APIScriptActionFileFolder | tee -a -i $APICLIlogfilepath
+    echo '  Folder Root path    : '$APIScriptActionFilePath | tee -a -i $APICLIlogfilepath
+    echo '  Script Filename     : '$APIScriptJSONActionFilename | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+
+    exit 251
+fi
+
+# Check that we can find the action handler scripts
+#
+if [ ! -r $APIScriptCSVActionFile ] ; then
+    # no file found, that is a problem
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'CSV Action Handler script file missing' | tee -a -i $APICLIlogfilepath
+    echo '  File not found : '$APIScriptCSVActionFile | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Other parameter elements : ' | tee -a -i $APICLIlogfilepath
+    echo '  Root of folder path : '$APIScriptActionFileRoot | tee -a -i $APICLIlogfilepath
+    echo '  Folder in Root path : '$APIScriptActionFileFolder | tee -a -i $APICLIlogfilepath
+    echo '  Folder Root path    : '$APIScriptActionFilePath | tee -a -i $APICLIlogfilepath
+    echo '  Script Filename     : '$APIScriptCSVActionFilename | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+
+    exit 251
+fi
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
+
 
 # -------------------------------------------------------------------------------------------------
 # Start executing Main Dump operations - json Standard, json Full, CSV
 # -------------------------------------------------------------------------------------------------
 
-export primarytargetoutputformat=$FileExtJSON
-if [ x"$script_dump_standard" = x"true" ] ; then
-    export APICLIdetaillvl=standard
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+if [ x"$script_dump_json" = x"true" ] ; then
     
-    echo
-    echo 'Now dumping "'$APICLIdetaillvl'" details to '$primarytargetoutputformat
-    echo 'Calling Action File : '$APIScriptJSONActionFile
-    echo
+    export primarytargetoutputformat=$FileExtJSON
+
+    if [ x"$script_dump_standard" = x"true" ] ; then
+        export APICLIdetaillvl=standard
+        
+        echo | tee -a -i $APICLIlogfilepath
+        echo 'Now dumping "'$APICLIdetaillvl'" details to '$primarytargetoutputformat | tee -a -i $APICLIlogfilepath
+        echo 'Calling Action File : '$APIScriptJSONActionFile | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        
+        . $APIScriptJSONActionFile "$@"
+    fi
     
-    ./$APIScriptJSONActionFile
+    if [ x"$script_dump_full" = x"true" ] ; then
+        export APICLIdetaillvl=full
+        
+        echo | tee -a -i $APICLIlogfilepath
+        echo 'Now dumping "'$APICLIdetaillvl'" details to '$primarytargetoutputformat | tee -a -i $APICLIlogfilepath
+        echo 'Calling Action File : '$APIScriptJSONActionFile | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        
+        . $APIScriptJSONActionFile "$@"
+    fi
+    
 fi
 
-echo
-echo 'Dumps Completed!'
-echo
+if [ x"$script_dump_csv" = x"true" ] ; then
+
+    export primarytargetoutputformat=$FileExtCSV
+
+    export APICLIdetaillvl=full
+    
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Now dumping "'$APICLIdetaillvl'" details to '$primarytargetoutputformat | tee -a -i $APICLIlogfilepath
+    echo 'Calling Action File : '$APIScriptCSVActionFile | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    
+    . $APIScriptCSVActionFile "$@"
+fi
+
+echo | tee -a -i $APICLIlogfilepath
+echo 'Dumps Completed!' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-04-25
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
+
 
 # =================================================================================================
 # END:  Main operations - 
@@ -1157,10 +1542,28 @@ HandleMgmtCLILogout
 # Clean-up and exit
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 echo 'CLI Operations Completed' | tee -a -i $APICLIlogfilepath
+
+if [ x"$CLIparm_CLEANUPWIP" = x"true" ] ; then
+    # Remove Work-In-Progress folder and files
+
+    if [ -r $APICLICSVpathexportwip ] ; then
+        echo 'Remove CSV Work-In-Progress folder and files' | tee -a -i $APICLIlogfilepath
+        echo '   CSV WIP Folder : '$APICLICSVpathexportwip | tee -a -i $APICLIlogfilepath
+        rm -v -r $APICLICSVpathexportwip | tee -a -i $APICLIlogfilepath
+    fi
+    
+    if [ -r $APICLIJSONpathexportwip ] ; then
+        echo 'Remove JSON Work-In-Progress folder and files' | tee -a -i $APICLIlogfilepath
+        echo '   JSON WIP Folder : '$APICLIJSONpathexportwip | tee -a -i $APICLIlogfilepath
+        rm -v -r $APICLIJSONpathexportwip | tee -a -i $APICLIlogfilepath
+    fi
+
+fi
+
 
 if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
     # Verbose mode ON
@@ -1187,7 +1590,7 @@ echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
 echo | tee -a -i $APICLIlogfilepath
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 
 # =================================================================================================

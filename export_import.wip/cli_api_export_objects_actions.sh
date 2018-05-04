@@ -3,7 +3,7 @@
 # SCRIPT Object dump action operations for API CLI Operations
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-03
+ScriptDate=2018-05-04
 
 #
 
@@ -27,7 +27,12 @@ else
     echo 'Calling Script version : '$APIScriptVersion | tee -a -i $APICLIlogfilepath
     echo 'Actions Script version : '$APIActionsScriptVersion | tee -a -i $APICLIlogfilepath
     echo | tee -a -i $APICLIlogfilepath
-    exit 255
+    echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+
+    exit 250
 fi
 
 
@@ -47,15 +52,27 @@ export primarytargetoutputformat=$FileExtJSON
 # Start executing Main operations
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04-3 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
-if [ ! -r $APICLICSVExportpathbase ] ; then
-    mkdir $APICLICSVExportpathbase
+if [ ! -z "$domainnamenospace" ] && [ "$CLIparm_NODOMAINFOLDERS" != "true" ] ; then
+    # Handle adding domain name to path for MDM operations
+    export APICLIpathexport=$APICLICSVExportpathbase/$domainnamenospace
+
+    if [ ! -r $APICLIpathexport ] ; then
+        mkdir $APICLIpathexport
+    fi
+else
+    # NOT adding domain name to path for MDM operations
+    export APICLIpathexport=$APICLICSVExportpathbase
+
+    if [ ! -r $APICLIpathexport ] ; then
+        mkdir $APICLIpathexport
+    fi
 fi
 
 # primary operation is export to primarytargetoutputformat
-export APICLIpathexport=$APICLICSVExportpathbase/$primarytargetoutputformat
+export APICLIpathexport=$APICLIpathexport/$primarytargetoutputformat
 
 if [ ! -r $APICLIpathexport ] ; then
     mkdir $APICLIpathexport
@@ -69,17 +86,36 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     if [ ! -r $APICLIpathexport ] ; then
         mkdir $APICLIpathexport
     fi
+
+    export APICLIJSONpathexportwip=
+    if [ x"$script_uses_wip_json" = x"true" ] ; then
+        # script uses work-in-progress (wip) folder for json
+    
+        export APICLIJSONpathexportwip=$APICLIpathexport/wip
+        
+        if [ ! -r $APICLIJSONpathexportwip ] ; then
+            mkdir $APICLIJSONpathexportwip
+        fi
+    fi
+else    
+    export APICLIJSONpathexportwip=
 fi
 
-export APICLIpathexportwip=
-if [ x"$script_uses_wip" = x"true" ] ; then
-    # script uses work-in-progress (wip) folder
+if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
+    # for CSV handle specifics, like wip
 
-    export APICLIpathexportwip=$APICLIpathexport/wip
+    export APICLICSVpathexportwip=
+    if [ x"$script_uses_wip" = x"true" ] ; then
+        # script uses work-in-progress (wip) folder for csv
     
-    if [ ! -r $APICLIpathexportwip ] ; then
-        mkdir $APICLIpathexportwip
+        export APICLICSVpathexportwip=$APICLIpathexport/wip
+        
+        if [ ! -r $APICLICSVpathexportwip ] ; then
+            mkdir $APICLICSVpathexportwip
+        fi
     fi
+else
+    export APICLICSVpathexportwip=
 fi
 
 export APICLIfileexportpost='_'$APICLIdetaillvl'_'$APICLIfileexportsuffix
@@ -100,7 +136,7 @@ echo 'Dump "'$APICLIdetaillvl'" details to path:  '$APICLIpathexport
 echo
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04-3
 
 
 # -------------------------------------------------------------------------------------------------

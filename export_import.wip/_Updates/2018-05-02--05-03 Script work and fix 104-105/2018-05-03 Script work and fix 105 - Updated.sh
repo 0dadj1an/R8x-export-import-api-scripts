@@ -3,29 +3,29 @@
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
-# ADDED 2018-05-02 -
+# ADDED 2018-05-03 -
 
-# ADDED 2018-05-02 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# ADDED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 
 #
-# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/- ADDED 2018-05-02
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/- ADDED 2018-05-03
 
-# MODIFIED 2018-05-02 -
+# MODIFIED 2018-05-03 -
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03
 
-# REMOVED 2018-05-02 -
+# REMOVED 2018-05-03 -
 
-# REMOVED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# REMOVED 2018-05-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ REMOVED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ REMOVED 2018-05-03
 
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -889,11 +889,11 @@ HandleMgmtCLILogin () {
         
         echo "mgmt_cli login success!" | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
-        cat $APICLIsessionfile
+        cat $APICLIsessionfile | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         
     fi
 
-    echo
     return 0
 }
 
@@ -963,36 +963,1165 @@ fi
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+# MODIFIED 2018-05-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+# -------------------------------------------------------------------------------------------------
+# Call command line parameter handler action script
+# -------------------------------------------------------------------------------------------------
+
+
+# MODIFIED 2018-05-02 -
+export cli_api_cmdlineparm_handler=cmd_line_parameters_handler.action.common.005.v00.29.00.sh
+
+echo | tee -a -i $APICLIlogfilepath
+echo '--------------------------------------------------------------------------' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
+echo "Calling external Command Line Paramenter Handling Script" | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
+
+. ./$cli_api_cmdlineparm_handler "$@"
+
+echo | tee -a -i $APICLIlogfilepath
+echo "Returned from external Command Line Paramenter Handling Script" | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
+
+dumpcliparmparseresults "$@"
+
+if [ "$APISCRIPTVERBOSE" = "true" ] && [ "$NOWAIT" != "true" ] ; then
+    echo
+    read -t $WAITTIME -n 1 -p "Any key to continue.  Automatic continue after $WAITTIME seconds : " anykey
+fi
+
+echo | tee -a -i $APICLIlogfilepath
+echo "Starting local execution" | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
+echo '--------------------------------------------------------------------------' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
+
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+
+#
+# Standard R8X API Scripts Command Line Parameters
+#
+# -? | --help
+# -v | --verbose
+# -P <web-ssl-port> | --port <web-ssl-port> | -P=<web-ssl-port> | --port=<web-ssl-port>
+# -r | --root
+# -u <admin_name> | --user <admin_name> | -u=<admin_name> | --user=<admin_name>
+# -p <password> | --password <password> | -p=<password> | --password=<password>
+# -m <server_IP> | --management <server_IP> | -m=<server_IP> | --management=<server_IP>
+# -d <domain> | --domain <domain> | -d=<domain> | --domain=<domain>
+# -s <session_file_filepath> | --session-file <session_file_filepath> | -s=<session_file_filepath> | --session-file=<session_file_filepath>
+# -l <log_path> | --log-path <log_path> | -l=<log_path> | --log-path=<log_path>'
+#
+# -o <output_path> | --output <output_path> | -o=<output_path> | --output=<output_path> 
+#
+# -x <export_path> | --export <export_path> | -x=<export_path> | --export=<export_path> 
+# -i <import_path> | --import-path <import_path> | -i=<import_path> | --import-path=<import_path>'
+# -k <delete_path> | --delete-path <delete_path> | -k=<delete_path> | --delete-path=<delete_path>'
+#
+# -c <csv_path> | --csv <csv_path> | -c=<csv_path> | --csv=<csv_path>'
+#
+# --NSO | --no-system-objects
+# --SO | --system-objects
+#
+# --NOWAIT
+#
+# --CLEANUPWIP
+# --NODOMAINFOLDERS
+# --ADDERRIGNORECSVEXPORT
+#
+
+export SHOWHELP=false
+export CLIparm_websslport=443
+export CLIparm_rootuser=false
+export CLIparm_user=
+export CLIparm_password=
+export CLIparm_mgmt=
+export CLIparm_domain=
+export CLIparm_sessionidfile=
+export CLIparm_logpath=
+
+export CLIparm_outputpath=
+export CLIparm_exportpath=
+export CLIparm_importpath=
+export CLIparm_deletepath=
+
+export CLIparm_csvpath=
+
+export CLIparm_NoSystemObjects=true
+
+export CLIparm_NOWAIT=
+export CLIparm_CLEANUPWIP=
+export CLIparm_NODOMAINFOLDERS=
+export CLIparm_ADDERRIGNORECSVEXPORT=
+
+# --NOWAIT
+#
+if [ -z "$NOWAIT" ]; then
+    # NOWAIT mode not set from shell level
+    export CLIparm_NOWAIT=false
+elif [ x"`echo "$NOWAIT" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # NOWAIT mode set OFF from shell level
+    export CLIparm_NOWAIT=false
+elif [ x"`echo "$NOWAIT" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # NOWAIT mode set ON from shell level
+    export CLIparm_NOWAIT=true
+else
+    # NOWAIT mode set to wrong value from shell level
+    export CLIparm_NOWAIT=false
+fi
+
+# --CLEANUPWIP
+#
+if [ -z "$CLEANUPWIP" ]; then
+    # CLEANUPWIP mode not set from shell level
+    export CLIparm_CLEANUPWIP=false
+elif [ x"`echo "$CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # CLEANUPWIP mode set OFF from shell level
+    export CLIparm_CLEANUPWIP=false
+elif [ x"`echo "$CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # CLEANUPWIP mode set ON from shell level
+    export CLIparm_CLEANUPWIP=true
+else
+    # CLEANUPWIP mode set to wrong value from shell level
+    export CLIparm_CLEANUPWIP=false
+fi
+
+# --NODOMAINFOLDERS
+#
+if [ -z "$NODOMAINFOLDERS" ]; then
+    # NODOMAINFOLDERS mode not set from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+elif [ x"`echo "$NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # NODOMAINFOLDERS mode set OFF from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+elif [ x"`echo "$NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # NODOMAINFOLDERS mode set ON from shell level
+    export CLIparm_NODOMAINFOLDERS=true
+else
+    # NODOMAINFOLDERS mode set to wrong value from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+fi
+
+# --ADDERRIGNORECSVEXPORT
+#
+if [ -z "$ADDERRIGNORECSVEXPORT" ]; then
+    # ADDERRIGNORECSVEXPORT mode not set from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=false
+elif [ x"`echo "$ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # ADDERRIGNORECSVEXPORT mode set OFF from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=false
+elif [ x"`echo "$ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # ADDERRIGNORECSVEXPORT mode set ON from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=true
+else
+    # CLEANUPWIP mode set to wrong value from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=false
+fi
+
+export REMAINS=
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
+
+# -------------------------------------------------------------------------------------------------
+# dumpcliparmparseresults
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+dumpcliparmparseresults () {
+
+	#
+	# Testing - Dump aquired values
+	#
+    #
+    # Screen width template for sizing, default width of 80 characters assumed
+    #
+    #                                    1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #                          01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+    export outstring=
+    #export outstring=$outstring"After: \n "
+    export outstring=$outstring"CLIparm_rootuser        ='$CLIparm_rootuser' \n "
+    export outstring=$outstring"CLIparm_user            ='$CLIparm_user' \n "
+    export outstring=$outstring"CLIparm_password        ='$CLIparm_password' \n "
+    
+    export outstring=$outstring"CLIparm_websslport      ='$CLIparm_websslport' \n "
+    export outstring=$outstring"CLIparm_mgmt            ='$CLIparm_mgmt' \n "
+    export outstring=$outstring"CLIparm_domain          ='$CLIparm_domain' \n "
+    export outstring=$outstring"CLIparm_sessionidfile   ='$CLIparm_sessionidfile' \n "
+    export outstring=$outstring"CLIparm_logpath         ='$CLIparm_logpath' \n "
+    export outstring=$outstring"CLIparm_outputpath      ='$CLIparm_outputpath' \n "
+    
+    if [ x"$script_use_export" = x"true" ] ; then
+        export outstring=$outstring"CLIparm_exportpath      ='$CLIparm_exportpath' \n "
+    fi
+    if [ x"$script_use_import" = x"true" ] ; then
+        export outstring=$outstring"CLIparm_importpath      ='$CLIparm_importpath' \n "
+    fi
+    if [ x"$script_use_delete" = x"true" ] ; then
+        export outstring=$outstring"CLIparm_deletepath      ='$CLIparm_deletepath' \n "
+    fi
+    if [ x"$script_use_csvfile" = x"true" ] ; then
+        export outstring=$outstring"CLIparm_csvpath         ='$CLIparm_csvpath' \n "
+    fi
+    
+    export outstring=$outstring"CLIparm_NoSystemObjects ='$CLIparm_NoSystemObjects' \n "
+	
+    export outstring=$outstring"SHOWHELP                ='$SHOWHELP' \n "
+    export outstring=$outstring" \n "
+    export outstring=$outstring"APISCRIPTVERBOSE        ='$APISCRIPTVERBOSE' \n "
+    export outstring=$outstring"NOWAIT                  ='$NOWAIT' \n "
+    export outstring=$outstring"CLEANUPWIP              ='$CLEANUPWIP' \n "
+    export outstring=$outstring"NODOMAINFOLDERS         ='$NODOMAINFOLDERS' \n "
+    export outstring=$outstring"ADDERRIGNORECSVEXPORT   ='$ADDERRIGNORECSVEXPORT' \n "
+    export outstring=$outstring" \n "
+    export outstring=$outstring"CLIparm_NOWAIT          ='$CLIparm_NOWAIT' \n "
+    export outstring=$outstring"CLIparm_CLEANUPWIP      ='$CLIparm_CLEANUPWIP' \n "
+    export outstring=$outstring"CLIparm_NODOMAINFOLDERS ='$CLIparm_NODOMAINFOLDERS' \n "
+    export outstring=$outstring"C_ADDERRIGNORECSVEXPORT ='$CLIparm_ADDERRIGNORECSVEXPORT' \n "
+    export outstring=$outstring" \n "
+    export outstring=$outstring"remains                 ='$REMAINS' \n "
+    
+	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
+	    # Verbose mode ON
+	    
+	    echo | tee -a -i $APICLIlogfilepath
+	    echo -e $outstring | tee -a -i $APICLIlogfilepath
+	    echo | tee -a -i $APICLIlogfilepath
+	    for i ; do echo - $i | tee -a -i $APICLIlogfilepath ; done
+	    echo CLI parms - number $# parms $@ | tee -a -i $APICLIlogfilepath
+	    echo | tee -a -i $APICLIlogfilepath
+        
+    else
+	    # Verbose mode ON
+	    
+	    echo >> $APICLIlogfilepath
+	    echo -e $outstring >> $APICLIlogfilepath
+	    echo >> $APICLIlogfilepath
+	    for i ; do echo - $i >> $APICLIlogfilepath ; done
+	    echo CLI parms - number $# parms $@ >> $APICLIlogfilepath
+	    echo >> $APICLIlogfilepath
+        
+	fi
+
+}
+
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+# -------------------------------------------------------------------------------------------------
+# Help display proceedure
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+# Show help information
+
+doshowhelp () {
+    #
+    # Screen width template for sizing, default width of 80 characters assumed
+    #
+    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+    echo
+    echo -n $0' [-?][-v]|[-r]|[-u <admin_name>]|[-p <password>]]|[-P <web ssl port>]'
+    echo -n '|[-m <server_IP>]|[-d <domain>]'
+    echo -n '|[-s <session_file_filepath>]'
+    echo -n '|[--SO|--NSO]'
+    echo -n '|[-l <log_path>]'
+    echo -n '|[-o <output_path>]'
+    if [ x"$script_use_export" = x"true" ] ; then
+        echo -n '|[-x <export_path>]'
+    fi
+    if [ x"$script_use_import" = x"true" ] ; then
+        echo -n '|[-i <import_path>]'
+    fi
+    if [ x"$script_use_delete" = x"true" ] ; then
+        echo -n '|[-k <delete_path>]'
+    fi
+    if [ x"$script_use_csvfile" = x"true" ] ; then
+        echo -n '|[-c <csv_path>]'
+    fi
+    echo
+
+    echo
+    echo ' Script Version:  '$ScriptVersion'  Date:  '$ScriptDate
+    echo
+    echo ' Standard Command Line Parameters: '
+    echo
+    echo '  Show Help                  -? | --help'
+    echo '  Verbose mode               -v | --verbose'
+    echo
+    echo '  Authenticate as root       -r | --root'
+    echo '  Set Console User Name      -u <admin_name> | --user <admin_name> |'
+    echo '                             -u=<admin_name> | --user=<admin_name>'
+    echo '  Set Console User password  -p <password> | --password <password> |'
+    echo '                             -p=<password> | --password=<password>'
+    echo
+    echo '  Set [web ssl] Port         -P <web-ssl-port> | --port <web-ssl-port> |'
+    echo '                             -P=<web-ssl-port> | --port=<web-ssl-port>'
+    echo '  Set Management Server IP   -m <server_IP> | --management <server_IP> |'
+    echo '                             -m=<server_IP> | --management=<server_IP>'
+    echo '  Set Management Domain      -d <domain> | --domain <domain> |'
+    echo '                             -d=<domain> | --domain=<domain>'
+    echo '  Set session file path      -s <session_file_filepath> |'
+    echo '                             --session-file <session_file_filepath> |'
+    echo '                             -s=<session_file_filepath> |'
+    echo '                             --session-file=<session_file_filepath>'
+    echo
+    echo '  Set log file path          -l <log_path> | --log-path <log_path> |'
+    echo '                             -l=<log_path> | --log-path=<log_path>'
+    echo '  Set output file path       -o <output_path> | --output <output_path> |'
+    echo '                             -o=<output_path> | --output=<output_path>'
+    echo
+    if [ x"$script_use_export" = x"true" ] ; then
+        echo '  Set export file path       -x <export_path> | --export <export_path> |'
+        echo '                             -x=<export_path> | --export=<export_path>'
+    fi
+    if [ x"$script_use_import" = x"true" ] ; then
+        echo '  Set import file path       -i <import_path> | --import-path <import_path> |'
+        echo '                             -i=<import_path> | --import-path=<import_path>'
+    fi
+    if [ x"$script_use_delete" = x"true" ] ; then
+        echo '  Set delete file path       -k <delete_path> | --delete-path <delete_path> |'
+        echo '                             -k=<delete_path> | --delete-path=<delete_path>'
+    fi
+    if [ x"$script_use_csvfile" = x"true" ] ; then
+        echo '  Set csv file path          -c <csv_path> | --csv <csv_path |'
+        echo '                             -c=<csv_path> | --csv=<csv_path>'
+    fi
+    echo
+    echo '  NO System Objects Export   --NSO | --no-system-objects  {default mode}'
+    echo '  Export System Objects      --SO | --system-objects'
+    echo
+    echo '  No waiting in verbose mode --NOWAIT'
+    echo '  Remove WIP folders after   --CLEANUPWIP'
+    echo '  No domain name in folders  --NODOMAINFOLDERS'
+    echo '  CSV export add err handler --ADDERRIGNORECSVEXPORT'
+    echo
+    echo '  session_file_filepath = fully qualified file path for session file'
+    echo '  log_path = fully qualified folder path for log files'
+    echo '  output_path = fully qualified folder path for output files'
+
+    if [ x"$script_use_export" = x"true" ] ; then
+        echo '  export_path = fully qualified folder path for export file'
+    fi
+    if [ x"$script_use_import" = x"true" ] ; then
+        echo '  import_path = fully qualified folder path for import files'
+    fi
+    if [ x"$script_use_delete" = x"true" ] ; then
+        echo '  delete_path = fully qualified folder path for delete files'
+    fi
+    if [ x"$script_use_csvfile" = x"true" ] ; then
+        echo '  csv_path = fully qualified file path for csv file'
+    fi
+
+    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+    echo
+    echo ' NOTE:  Only use Management Server IP (-m) parameter if operating from a '
+    echo '        different host than the management host itself.'
+    echo
+    echo ' NOTE:  Use the Domain Name (text) with the Domain (-d) parameter when'
+    echo '        Operating in Multi Domain Management environment.'
+    echo '        Use the "Global" domain for the global domain objects.'
+    echo '          Quotes NOT required!'
+    echo '        Use the "System Data" domain for system domain objects.'
+    echo '          Quotes REQUIRED!'
+    echo
+    echo ' NOTE:  System Objects are NOT exported in CSV or Full JSON dump mode!'
+    echo '        Control of System Objects with --SO and --NSO only works with CSV or'
+    echo '        Full JSON dump.  Standard JSON dump does not support selection of the'
+    echo '        System Objects during operation, so all System Objects are collected'
+    echo
+
+    echo ' Example: General :'
+    echo
+    echo ' ]# '$ScriptName' -u fooAdmin -p voodoo -P 4434 -m 192.168.1.1 -d fooville -s "/var/tmp/id.txt" -l "/var/tmp/script_dump"'
+    echo
+    echo ' ]# '$ScriptName' -u fooAdmin -p voodoo -P 4434 -d Global --SO -s "/var/tmp/id.txt"'
+    echo ' ]# '$ScriptName' -u fooAdmin -p voodoo -P 4434 -d "System Data" --NSO -s "/var/tmp/id.txt"'
+    echo
+
+
+    if [ x"$script_use_export" = x"true" ] ; then
+        echo ' Example: Export:'
+        echo
+        echo ' ]# '$ScriptName' -u fooAdmin -p voodoo -P 4434 -m 192.168.1.1 -d fooville -s "/var/tmp/id.txt" -l "/var/tmp/script_dump" -x "/var/tmp/script_dump/export"'
+        echo
+    fi
+
+    if [ x"$script_use_import" = x"true" ] ; then
+        echo ' Example: Import:'
+        echo
+        echo ' ]# '$ScriptName' -u fooAdmin -p voodoo -P 4434 -m 192.168.1.1 -d fooville -s "/var/tmp/id.txt" -l "/var/tmp/script_dump" -i "/var/tmp/import"'
+        echo
+    fi
+    
+    if [ x"$script_use_delete" = x"true" ] ; then
+        echo ' Example: Delete:'
+        echo
+        echo ' ]# '$ScriptName' -u fooAdmin -p voodoo -P 4434 -m 192.168.1.1 -d fooville -s "/var/tmp/id.txt" -l "/var/tmp/script_dump" -x "/var/tmp/script_dump/export" -k "/var/tmp/delete"'
+        echo
+    fi
+    
+    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
+    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+    echo
+    return 1
+}
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# Process command line parameters and set appropriate values
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+while [ -n "$1" ]; do
+    # Copy so we can modify it (can't modify $1)
+    OPT="$1"
+
+    # testing
+    #echo 'OPT = '$OPT
+    #
+
+    # Detect argument termination
+    if [ x"$OPT" = x"--" ]; then
+        # testing
+        # echo "Argument termination"
+        #
+        
+        shift
+        for OPT ; do
+            REMAINS="$REMAINS \"$OPT\""
+            done
+            break
+        fi
+    # Parse current opt
+    while [ x"$OPT" != x"-" ] ; do
+        case "$OPT" in
+            # Help and Standard Operations
+            '-?' | --help )
+                SHOWHELP=true
+                ;;
+            '-v' | --verbose )
+                export APISCRIPTVERBOSE=true
+                ;;
+            --NOWAIT )
+                CLIparm_NOWAIT=true
+                ;;
+            # Handle immediate opts like this
+            -r | --root )
+                CLIparm_rootuser=true
+                ;;
+#           -f | --force )
+#               FORCE=true
+#               ;;
+            --SO | --system-objects )
+                CLIparm_NoSystemObjects=false
+                shift
+                ;;
+            --NSO | --no-system-objects )
+                CLIparm_NoSystemObjects=true
+                shift
+                ;;
+            --CLEANUPWIP )
+                CLIparm_CLEANUPWIP=true
+                ;;
+            --NODOMAINFOLDERS )
+                CLIparm_NODOMAINFOLDERS=true
+                ;;
+            --ADDERRIGNORECSVEXPORT )
+                CLIparm_ADDERRIGNORECSVEXPORT=true
+                ;;
+            # Handle --flag=value opts like this
+            -u=* | --user=* )
+                CLIparm_user="${OPT#*=}"
+                #shift
+                ;;
+            -p=* | --password=* )
+                CLIparm_password="${OPT#*=}"
+                #shift
+                ;;
+            -P=* | --port=* )
+                CLIparm_websslport="${OPT#*=}"
+                #shift
+                ;;
+            -m=* | --management=* )
+                CLIparm_mgmt="${OPT#*=}"
+                #shift
+                ;;
+            -d=* | --domain=* )
+                CLIparm_domain="${OPT#*=}"
+                #shift
+                ;;
+            -s=* | --session-file=* )
+                CLIparm_sessionidfile="${OPT#*=}"
+                #shift
+                ;;
+            -l=* | --log-path=* )
+                CLIparm_logpath="${OPT#*=}"
+                #shift
+                ;;
+            -x=* | --export=* )
+                CLIparm_exportpath="${OPT#*=}"
+                #shift
+                ;;
+            -o=* | --output=* )
+                CLIparm_outputpath="${OPT#*=}"
+                #shift
+                ;;
+            -i=* | --import-path=* )
+                CLIparm_importpath="${OPT#*=}"
+                #shift
+                ;;
+            -k=* | --delete-path=* )
+                CLIparm_deletepath="${OPT#*=}"
+                #shift
+                ;;
+            -c=* | --csv=* )
+                CLIparm_csvpath="${OPT#*=}"
+                #shift
+                ;;
+            # and --flag value opts like this
+            -u* | --user )
+                CLIparm_user="$2"
+                shift
+                ;;
+            -p* | --password )
+                CLIparm_password="$2"
+                shift
+                ;;
+            -P* | --port )
+                CLIparm_websslport="$2"
+                shift
+                ;;
+            -m* | --management )
+                CLIparm_mgmt="$2"
+                shift
+                ;;
+            -d* | --domain )
+                CLIparm_domain="$2"
+                shift
+                ;;
+            -s* | --session-file )
+                CLIparm_sessionidfile="$2"
+                shift
+                ;;
+            -l* | --log-path )
+                CLIparm_logpath="$2"
+                shift
+                ;;
+            -o* | --output )
+                CLIparm_outputpath="$2"
+                shift
+                ;;
+            -x* | --export )
+                CLIparm_exportpath="$2"
+                shift
+                ;;
+            -i* | --import-path )
+                CLIparm_importpath="$2"
+                shift
+                ;;
+            -k* | --delete-path )
+                CLIparm_deletepath="$2"
+                shift
+                ;;
+            -c* | --csv )
+                CLIparm_csvpath="$2"
+                shift
+                ;;
+            # Anything unknown is recorded for later
+            * )
+                REMAINS="$REMAINS \"$OPT\""
+                break
+                ;;
+        esac
+        # Check for multiple short options
+        # NOTICE: be sure to update this pattern to match valid options
+        # Remove any characters matching "-", and then the values between []'s
+        #NEXTOPT="${OPT#-[upmdsor?]}" # try removing single short opt
+        NEXTOPT="${OPT#-[vrf?]}" # try removing single short opt
+        if [ x"$OPT" != x"$NEXTOPT" ] ; then
+            OPT="-$NEXTOPT"  # multiple short opts, keep going
+        else
+            break  # long form, exit inner loop
+        fi
+    done
+    # Done with that param. move to next
+    shift
+done
+# Set the non-parameters back into the positional parameters ($1 $2 ..)
+eval set -- $REMAINS
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
+
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+export SHOWHELP=$SHOWHELP
+export CLIparm_websslport=$CLIparm_websslport
+export CLIparm_rootuser=$CLIparm_rootuser
+export CLIparm_user=$CLIparm_user
+export CLIparm_password=$CLIparm_password
+export CLIparm_mgmt=$CLIparm_mgmt
+export CLIparm_domain=$CLIparm_domain
+export CLIparm_sessionidfile=$CLIparm_sessionidfile
+export CLIparm_logpath=$CLIparm_logpath
+
+export CLIparm_outputpath=$CLIparm_outputpath
+
+export CLIparm_exportpath=$CLIparm_exportpath
+export CLIparm_importpath=$CLIparm_importpath
+export CLIparm_deletepath=$CLIparm_deletepath
+
+export CLIparm_csvpath=$CLIparm_csvpath
+
+export CLIparm_NoSystemObjects=`echo "$CLIparm_NoSystemObjects" | tr '[:upper:]' '[:lower:]'`
+
+# ADDED 2018-05-03-2 -
+export CLIparm_NOWAIT=`echo "$CLIparm_NOWAIT" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_CLEANUPWIP=`echo "$CLIparm_CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_NODOMAINFOLDERS=`echo "$CLIparm_NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_ADDERRIGNORECSVEXPORT=`echo "$CLIparm_ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`
+
+export REMAINS=$REMAINS
+
+dumpcliparmparseresults $@
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+# MODIFIED 2018-05-03 -
+    if [ ! -z $CLIparm_sessionidfile ] ; then
+        # CLIparm_sessionidfile value is set so use it
+        export APICLIsessionfile=$CLIparm_sessionidfile
+    else
+        # Updated to make session id file unique in case of multiple admins running script from same folder
+        export APICLIsessionfile=id.`date +%Y%m%d-%H%M%S%Z`.txt
+    fi
+
+# MODIFIED 2018-05-03 -
+    export domainnamenospace=
+    if [ ! -z $domaintarget ] ; then
+        # Handle domain name that might include space if the value is set
+        #export domainnamenospace="$(echo -e "${domaintarget}" | tr -d '[:space:]')"
+        #export domainnamenospace=$(echo -e ${domaintarget} | tr -d '[:space:]')
+        export domainnamenospace=$(echo -e ${domaintarget} | tr ' ' '_')
+    else
+        export domainnamenospace=
+    fi
+    
+    if [ ! -z $domainnamenospace ] ; then
+        # Handle domain name that might include space
+        if [ ! -z $CLIparm_sessionidfile ] ; then
+            # adjust if CLIparm_sessionidfile was set, since that might be a complete path, append the path to it 
+            export APICLIsessionfile=$APICLIsessionfile.$domainnamenospace
+        else
+            # assume the session file is set to a local file and prefix the domain to it
+            export APICLIsessionfile=$domainnamenospace.$APICLIsessionfile
+        fi
+    fi
+    
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+# -------------------------------------------------------------------------------------------------
+# SetupLogin2MgmtCLI - Setup Login to Management CLI
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+SetupLogin2MgmtCLI () {
+    #
+    # setup the mgmt_cli login fundamentals
+    #
+    
+    export APICLIwebsslport=443
+    if [ ! -z $CLIparm_websslport ] ; then
+        export APICLIwebsslport=$CLIparm_websslport
+    else
+        export APICLIwebsslport=443
+    fi
+    
+    # MODIFIED 2018-05-03 -
+
+    # ================================================================================================
+    # NOTE:  APICLIadmin value must be set to operate this script, removing this varaiable will lead
+    #        to logon failure with mgmt_cli logon.  Root User (-r) parameter is handled differently,
+    #        so DO NOT REMOVE OR CLEAR this variable.  Adjust the export APICLIadmin= line to reflect
+    #        the default administrator name for the environment
+    #
+    #        The value for APICLIadmin now is set by the value of DefaultMgmtAdmin found at the top 
+    #        of the script in the 'Root script declarations' section.
+    #
+    # ================================================================================================
+    if [ ! -z $CLIparm_user ] ; then
+        export APICLIadmin=$CLIparm_user
+    elif [ ! -z $DefaultMgmtAdmin ] ; then
+        export APICLIadmin=$DefaultMgmtAdmin
+    else
+        #export APICLIadmin=administrator
+        #export APICLIadmin=admin
+        export APICLIadmin=$DefaultMgmtAdmin
+    fi
+    
+    # Clear variables that need to be set later
+    
+    export mgmttarget=
+    export domaintarget=
+    
+    return 0
+}
+
+#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+
+# -------------------------------------------------------------------------------------------------
+# Login2MgmtCLI - Process Login to Management CLI
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+Login2MgmtCLI () {
+    #
+    # Execute the mgmt_cli login and address results
+    #
+
+    HandleMgmtCLILogin
+    SUBEXITCODE=$?
+    
+    if [ "$SUBEXITCODE" != "0" ] ; then
+    
+        echo | tee -a -i $APICLIlogfilepath
+        echo "Terminating script..." | tee -a -i $APICLIlogfilepath
+        echo "Exitcode $SUBEXITCODE" | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        exit $SUBEXITCODE
+    
+    else
+        echo | tee -a -i $APICLIlogfilepath
+    fi
+    
+    return 0
+}
+
+#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+if [ ! -z $CLIparm_domain ] ; then
+    # Handle domain parameter for login string
+    export domaintarget=$CLIparm_domain
+else
+    export domaintarget=
+fi
+
+SetupLogin2MgmtCLI
+
+Login2MgmtCLI
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+# -------------------------------------------------------------------------------------------------
+# Root script declarations
+# -------------------------------------------------------------------------------------------------
+
+# ADDED 2018-05-03 -
+
+# ================================================================================================
+# NOTE:  
+#   DefaultMgmtAdmin value is used to set the APICLIadmin value in the setup for logon.  This is
+#   the default fall back value if the --user parameter is not used to set the actual management 
+#   server admininstrator name.  This value should be set to the organizational standard to
+#   simplify operation, since it is the default that is used for mgmt_cli login user, where the
+#   password must still be entered
+# ================================================================================================
+
+#export DefaultMgmtAdmin=admin
+export DefaultMgmtAdmin=administrator
+
+
+# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 
+#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# =================================================================================================
+# END:  Setup Login Parameters and Mgmt_CLI handler procedures
+# =================================================================================================
+# =================================================================================================
+
+
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+# =================================================================================================
+# =================================================================================================
+# START:  Setup Login Parameters and Mgmt_CLI handler procedures
+# =================================================================================================
+
+
+# -------------------------------------------------------------------------------------------------
+# HandleMgmtCLIPublish - publish changes if needed
+# -------------------------------------------------------------------------------------------------
+
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+if [ x"$script_dump_standard" = x"true" ] ; then
+    export APICLIdumppathjsonstandard=$APICLIpathbase/json/standard
+    #if [ ! -r $APICLIdumppathjsonstandard ] ; then
+    #    mkdir $APICLIdumppathjsonstandard
+    #fi
+fi
+
+
+# =================================================================================================
+# START:  Setup Login Parameters and Login to Mgmt_CLI
+# =================================================================================================
+
+
+if [ ! -z $CLIparm_domain ] ; then
+    # Handle domain parameter for login string
+    export domaintarget=$CLIparm_domain
+else
+    export domaintarget=
+fi
+
+SetupLogin2MgmtCLI
+
+Login2MgmtCLI
+
+
+# =================================================================================================
+# END:  Setup Login Parameters and Login to Mgmt_CLI
+# =================================================================================================
+
+
+# -------------------------------------------------------------------------------------------------
+# Set parameters for Main operations
+# -------------------------------------------------------------------------------------------------
+
+
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+# -------------------------------------------------------------------------------------------------
+# Set parameters for Main operations - Other Path Values
+# -------------------------------------------------------------------------------------------------
+
+if [ "$script_dump_csv" = "true" ] ; then
+    export APICLIdumppathcsv=$APICLICSVExportpathbase/csv
+fi
+
+if [ x"$script_dump_json" = x"true" ] ; then
+    export APICLIdumppathjson=$APICLICSVExportpathbase/json
+fi
+
+if [ x"$script_dump_full" = x"true" ] ; then
+    export APICLIdumppathjsonfull=$APICLIdumppathjson/full
+fi
+
+if [ x"$script_dump_standard" = x"true" ] ; then
+    export APICLIdumppathjsonstandard=$APICLIdumppathjson/standard
+fi
+
+
+# =================================================================================================
+# START:  Setup Login Parameters and Login to Mgmt_CLI
+# =================================================================================================
+
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+# =================================================================================================
+# =================================================================================================
+# START:  Setup CLI Parameter based values
+# =================================================================================================
+
+# =================================================================================================
+# START:  Common Procedures
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureRootPath - Configure root and base path
+# -------------------------------------------------------------------------------------------------
+
+ConfigureRootPath () {
+
+    # ---------------------------------------------------------
+    # Create the base path and directory structure for output
+    # ---------------------------------------------------------
+    
+    export APICLIpathroot=./dump
+    if [ x"$CLIparm_outputpath" != x"" ] ; then
+        export APICLIpathroot=$CLIparm_outputpath
+    else
+        export APICLIpathroot=./dump
+    fi
+    
+    if [ ! -r $APICLIpathroot ] ; then
+        mkdir $APICLIpathroot
+    fi
+    
+    export APICLIpathbase=$APICLIpathroot/$DATE
+    
+    if [ ! -r $APICLIpathbase ] ; then
+        mkdir $APICLIpathbase
+    fi
+    
+    return 0
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureLogPath - Configure log file path and handle temporary log file
+# -------------------------------------------------------------------------------------------------
+
+ConfigureLogPath () {
+
+    # ---------------------------------------------------------
+    # Create the base path and directory structure for logging
+    # ---------------------------------------------------------
+    
+    if [ x"$CLIparm_logpath" != x"" ] ; then
+        export APICLIlogpathroot=$CLIparm_logpath
+    else
+        export APICLIlogpathroot=$APICLIpathroot
+    fi
+    
+    if [ ! -r $APICLIlogpathroot ] ; then
+        mkdir $APICLIlogpathroot
+    fi
+    
+    export APICLIlogpathbase=$APICLIlogpathroot/$DATE
+    
+    if [ ! -r $APICLIlogpathbase ] ; then
+        mkdir $APICLIlogpathbase
+    fi
+    
+    export APICLIlogfilepathtemp=$APICLIlogfilepath
+    export APICLIlogfilepath=$APICLIlogpathbase/$ScriptName'_'$APIScriptVersion'_'$DATEDTGS.log
+    
+    cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
+    rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
+    
+    return 0
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureCommonCLIParameterValues - Configure Common CLI Parameter Values
+# -------------------------------------------------------------------------------------------------
+
+ConfigureCommonCLIParameterValues () {
+
+    #
+    # Configure Common CLI Parameter Values
+    #
+    
+    ConfigureRootPath
+
+    ConfigureLogPath
+    
+    return 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# END:  Common Procedures
+# =================================================================================================
+
+# =================================================================================================
+# START:  Specific Procedures
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 -
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureOtherCLIParameterPaths - Configure other path and folder values based on CLI parameters
+# -------------------------------------------------------------------------------------------------
+
+ConfigureOtherCLIParameterPaths () {
+
+    # ---------------------------------------------------------
+    # Setup other paths we may need - but these should not create folders (yet)
+    # Configure other path and folder values based on CLI parameters
+    # ---------------------------------------------------------
+    
+    export APICLICSVExportpathbase=
+    if [ x"$script_use_export" = x"true" ] ; then
+        if [ x"$CLIparm_exportpath" != x"" ] ; then
+            export APICLICSVExportpathbase=$CLIparm_exportpath
+        else
+            export APICLICSVExportpathbase=$APICLIpathbase
+        fi
+    fi
+    
+    export APICLICSVImportpathbase=
+    if [ x"$script_use_import" = x"true" ] ; then
+        if [ x"$CLIparm_importpath" != x"" ] ; then
+            export APICLICSVImportpathbase=$CLIparm_importpath
+        else
+            export APICLICSVImportpathbase=./import.csv
+        fi
+    fi
+    
+    export APICLICSVDeletepathbase=
+    if [ x"$script_use_delete" = x"true" ] ; then
+        if [ x"$CLIparm_deletepath" != x"" ] ; then
+            export APICLICSVDeletepathbase=$CLIparm_deletepath
+        else
+            export APICLICSVDeletepathbase=./delete.csv
+        fi
+    fi
+    
+    export APICLICSVcsvpath=
+    if [ x"$script_use_csvfile" = x"true" ] ; then
+        if [ x"$CLIparm_csvpath" != x"" ] ; then
+            export APICLICSVcsvpath=$CLIparm_csvpath
+        else
+            export APICLICSVcsvpath=./domains.csv
+        fi
+    fi
+    return 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureOtherCLIParameterValues - Configure other values based on CLI parameters
+# -------------------------------------------------------------------------------------------------
+
+ConfigureOtherCLIParameterValues () {
+
+    # ---------------------------------------------------------
+    # Setup other variables based on CLI parameters
+    # ---------------------------------------------------------
+    
+#    export NoSystemObjects=false
+    export NoSystemObjects=true
+    
+    export NoSystemObjectsValue=`echo "$CLIparm_NoSystemObjects" | tr '[:upper:]' '[:lower:]'`
+    
+#    if [ x"$NoSystemObjectsValue" = x"true" ] ; then
+#        export NoSystemObjects=true
+#    else
+#        export NoSystemObjects=false
+#    fi
+    
+    if [ x"$NoSystemObjectsValue" = x"false" ] ; then
+        export NoSystemObjects=false
+    else
+        export NoSystemObjects=true
+    fi
+    
+    return 0
+}
+
+
+# -------------------------------------------------------------------------------------------------
+# ConfigureSpecificCLIParameterValues - Configure Specific CLI Parameter Values
+# -------------------------------------------------------------------------------------------------
+
+ConfigureSpecificCLIParameterValues () {
+
+    #
+    # Configure Specific CLI Parameter Values
+    #
+    
+    ConfigureOtherCLIParameterPaths
+
+    ConfigureOtherCLIParameterValues
+
+    return 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# END:  Specific Procedures
+# =================================================================================================
+
+# -------------------------------------------------------------------------------------------------
+# Set parameters for Main operations - CLI
+# -------------------------------------------------------------------------------------------------
+
+ConfigureCommonCLIParameterValues
+
+ConfigureSpecificCLIParameterValues
+    
+# =================================================================================================
+# END:  Setup CLI Parameter based values
+# =================================================================================================
+# =================================================================================================
 
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/

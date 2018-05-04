@@ -3,7 +3,7 @@
 # SCRIPT Template for CLI Operations for command line parameters handling
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-03
+ScriptDate=2018-05-04
 
 #
 
@@ -27,7 +27,12 @@ else
     echo 'Calling Script version : '$APIScriptVersion | tee -a -i $APICLIlogfilepath
     echo 'Actions Script version : '$APIActionsScriptVersion | tee -a -i $APICLIlogfilepath
     echo | tee -a -i $APICLIlogfilepath
-    exit 255
+    echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+
+    exit 250
 fi
 
 
@@ -116,16 +121,12 @@ fi
 # START:  Command Line Parameter Handling and Help
 # =================================================================================================
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 
-# Code template for parsing command line parameters using only portable shell
-# code, while handling both long and short params, handling '-f file' and
-# '-f=file' style param data and also capturing non-parameters to be inserted
-# back into the shell positional parameters.
 #
-# Standard Command Line Parameters
+# Standard R8X API Scripts Command Line Parameters
 #
 # -? | --help
 # -v | --verbose
@@ -149,6 +150,12 @@ fi
 # --NSO | --no-system-objects
 # --SO | --system-objects
 #
+# --NOWAIT
+#
+# --CLEANUPWIP
+# --NODOMAINFOLDERS
+# --ADDERRIGNORECSVEXPORT
+#
 
 export SHOWHELP=false
 export CLIparm_websslport=443
@@ -169,16 +176,85 @@ export CLIparm_csvpath=
 
 export CLIparm_NoSystemObjects=true
 
+export CLIparm_NOWAIT=
+export CLIparm_CLEANUPWIP=
+export CLIparm_NODOMAINFOLDERS=
+export CLIparm_ADDERRIGNORECSVEXPORT=
+
+# --NOWAIT
+#
+if [ -z "$NOWAIT" ]; then
+    # NOWAIT mode not set from shell level
+    export CLIparm_NOWAIT=false
+elif [ x"`echo "$NOWAIT" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # NOWAIT mode set OFF from shell level
+    export CLIparm_NOWAIT=false
+elif [ x"`echo "$NOWAIT" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # NOWAIT mode set ON from shell level
+    export CLIparm_NOWAIT=true
+else
+    # NOWAIT mode set to wrong value from shell level
+    export CLIparm_NOWAIT=false
+fi
+
+# --CLEANUPWIP
+#
+if [ -z "$CLEANUPWIP" ]; then
+    # CLEANUPWIP mode not set from shell level
+    export CLIparm_CLEANUPWIP=false
+elif [ x"`echo "$CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # CLEANUPWIP mode set OFF from shell level
+    export CLIparm_CLEANUPWIP=false
+elif [ x"`echo "$CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # CLEANUPWIP mode set ON from shell level
+    export CLIparm_CLEANUPWIP=true
+else
+    # CLEANUPWIP mode set to wrong value from shell level
+    export CLIparm_CLEANUPWIP=false
+fi
+
+# --NODOMAINFOLDERS
+#
+if [ -z "$NODOMAINFOLDERS" ]; then
+    # NODOMAINFOLDERS mode not set from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+elif [ x"`echo "$NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # NODOMAINFOLDERS mode set OFF from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+elif [ x"`echo "$NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # NODOMAINFOLDERS mode set ON from shell level
+    export CLIparm_NODOMAINFOLDERS=true
+else
+    # NODOMAINFOLDERS mode set to wrong value from shell level
+    export CLIparm_NODOMAINFOLDERS=false
+fi
+
+# --ADDERRIGNORECSVEXPORT
+#
+if [ -z "$ADDERRIGNORECSVEXPORT" ]; then
+    # ADDERRIGNORECSVEXPORT mode not set from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=false
+elif [ x"`echo "$ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # ADDERRIGNORECSVEXPORT mode set OFF from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=false
+elif [ x"`echo "$ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # ADDERRIGNORECSVEXPORT mode set ON from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=true
+else
+    # CLEANUPWIP mode set to wrong value from shell level
+    export CLIparm_ADDERRIGNORECSVEXPORT=false
+fi
+
 export REMAINS=
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 # -------------------------------------------------------------------------------------------------
 # dumpcliparmparseresults
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03-3 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 dumpcliparmparseresults () {
@@ -220,8 +296,19 @@ dumpcliparmparseresults () {
     export outstring=$outstring"CLIparm_NoSystemObjects ='$CLIparm_NoSystemObjects' \n "
 	
     export outstring=$outstring"SHOWHELP                ='$SHOWHELP' \n "
+    export outstring=$outstring" \n "
     export outstring=$outstring"APISCRIPTVERBOSE        ='$APISCRIPTVERBOSE' \n "
-    export outstring=$outstring"remains                 ='$REMAINS'"
+    export outstring=$outstring"NOWAIT                  ='$NOWAIT' \n "
+    export outstring=$outstring"CLEANUPWIP              ='$CLEANUPWIP' \n "
+    export outstring=$outstring"NODOMAINFOLDERS         ='$NODOMAINFOLDERS' \n "
+    export outstring=$outstring"ADDERRIGNORECSVEXPORT   ='$ADDERRIGNORECSVEXPORT' \n "
+    export outstring=$outstring" \n "
+    export outstring=$outstring"CLIparm_NOWAIT          ='$CLIparm_NOWAIT' \n "
+    export outstring=$outstring"CLIparm_CLEANUPWIP      ='$CLIparm_CLEANUPWIP' \n "
+    export outstring=$outstring"CLIparm_NODOMAINFOLDERS ='$CLIparm_NODOMAINFOLDERS' \n "
+    export outstring=$outstring"C_ADDERRIGNORECSVEXPORT ='$CLIparm_ADDERRIGNORECSVEXPORT' \n "
+    export outstring=$outstring" \n "
+    export outstring=$outstring"remains                 ='$REMAINS' \n "
     
 	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
 	    # Verbose mode ON
@@ -249,14 +336,14 @@ dumpcliparmparseresults () {
 
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
-
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-3
 
 # -------------------------------------------------------------------------------------------------
 # dumprawcliparms
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 dumprawcliparms () {
     #
@@ -270,7 +357,7 @@ dumprawcliparms () {
 
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03
 
 # MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
@@ -298,7 +385,7 @@ fi
 # Help display proceedure
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 # Show help information
@@ -380,6 +467,11 @@ doshowhelp () {
     echo '  NO System Objects Export   --NSO | --no-system-objects  {default mode}'
     echo '  Export System Objects      --SO | --system-objects'
     echo
+    echo '  No waiting in verbose mode --NOWAIT'
+    echo '  Remove WIP folders after   --CLEANUPWIP'
+    echo '  No domain name in folders  --NODOMAINFOLDERS'
+    echo '  CSV export add err handler --ADDERRIGNORECSVEXPORT'
+    echo
     echo '  session_file_filepath = fully qualified file path for session file'
     echo '  log_path = fully qualified folder path for log files'
     echo '  output_path = fully qualified folder path for output files'
@@ -454,7 +546,7 @@ doshowhelp () {
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -463,7 +555,7 @@ doshowhelp () {
 # Process command line parameters and set appropriate values
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 while [ -n "$1" ]; do
@@ -496,6 +588,10 @@ while [ -n "$1" ]; do
             '-v' | --verbose )
                 export APISCRIPTVERBOSE=true
                 ;;
+            --NOWAIT )
+                CLIparm_NOWAIT=true
+                export NOWAIT=true
+                ;;
             # Handle immediate opts like this
             -r | --root )
                 CLIparm_rootuser=true
@@ -503,6 +599,23 @@ while [ -n "$1" ]; do
 #           -f | --force )
 #               FORCE=true
 #               ;;
+            --SO | --system-objects )
+                CLIparm_NoSystemObjects=false
+                shift
+                ;;
+            --NSO | --no-system-objects )
+                CLIparm_NoSystemObjects=true
+                shift
+                ;;
+            --CLEANUPWIP )
+                CLIparm_CLEANUPWIP=true
+                ;;
+            --NODOMAINFOLDERS )
+                CLIparm_NODOMAINFOLDERS=true
+                ;;
+            --ADDERRIGNORECSVEXPORT )
+                CLIparm_ADDERRIGNORECSVEXPORT=true
+                ;;
             # Handle --flag=value opts like this
             -u=* | --user=* )
                 CLIparm_user="${OPT#*=}"
@@ -601,14 +714,6 @@ while [ -n "$1" ]; do
                 CLIparm_csvpath="$2"
                 shift
                 ;;
-            --SO | --system-objects )
-                CLIparm_NoSystemObjects=false
-                shift
-                ;;
-            --NSO | --no-system-objects )
-                CLIparm_NoSystemObjects=true
-                shift
-                ;;
             # Anything unknown is recorded for later
             * )
                 REMAINS="$REMAINS \"$OPT\""
@@ -636,9 +741,9 @@ eval set -- $REMAINS
 # -------------------------------------------------------------------------------------------------
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 export SHOWHELP=$SHOWHELP
@@ -661,12 +766,18 @@ export CLIparm_csvpath=$CLIparm_csvpath
 
 export CLIparm_NoSystemObjects=`echo "$CLIparm_NoSystemObjects" | tr '[:upper:]' '[:lower:]'`
 
+# ADDED 2018-05-03-2 -
+export CLIparm_NOWAIT=`echo "$CLIparm_NOWAIT" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_CLEANUPWIP=`echo "$CLIparm_CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_NODOMAINFOLDERS=`echo "$CLIparm_NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_ADDERRIGNORECSVEXPORT=`echo "$CLIparm_ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`
+
 export REMAINS=$REMAINS
 
 dumpcliparmparseresults $@
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 # -------------------------------------------------------------------------------------------------
 # Handle request for help and exit
