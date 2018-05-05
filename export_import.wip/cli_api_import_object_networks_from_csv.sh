@@ -3,7 +3,7 @@
 # SCRIPT Object import using CSV file for API CLI Operations for setting networks
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
@@ -566,23 +566,23 @@ CommandLineParameterHandler "$@"
 
 
 # -------------------------------------------------------------------------------------------------
-# Local Handle request for help and exit
+# Local Handle request for help and return
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
-# Was help requested, if so show local content and exit
+# Was help requested, if so show local content and return
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
     # Show Local Help
     doshowlocalhelp
-    exit 255 
+    return 255 
 fi
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1032,7 +1032,7 @@ SetupLogin2MgmtCLI () {
 # Login2MgmtCLI - Process Login to Management CLI
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 Login2MgmtCLI () {
@@ -1052,7 +1052,7 @@ Login2MgmtCLI () {
         echo | tee -a -i $APICLIlogfilepath
         echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
-        exit $SUBEXITCODE
+        return $SUBEXITCODE
     
     else
         echo | tee -a -i $APICLIlogfilepath
@@ -1062,7 +1062,7 @@ Login2MgmtCLI () {
 }
 
 #
-# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1087,6 +1087,8 @@ Login2MgmtCLI () {
 # ConfigureRootPath - Configure root and base path
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-04 -
+
 ConfigureRootPath () {
 
     # ---------------------------------------------------------
@@ -1101,22 +1103,23 @@ ConfigureRootPath () {
     fi
     
     if [ ! -r $APICLIpathroot ] ; then
-        mkdir $APICLIpathroot
+        mkdir -p -v $APICLIpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIpathbase=$APICLIpathroot/$DATE
     
     if [ ! -r $APICLIpathbase ] ; then
-        mkdir $APICLIpathbase
+        mkdir -p -v $APICLIpathbase | tee -a -i $APICLIlogfilepath
     fi
     
-    return 0
 }
 
 
 # -------------------------------------------------------------------------------------------------
 # ConfigureLogPath - Configure log file path and handle temporary log file
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 -
 
 ConfigureLogPath () {
 
@@ -1131,13 +1134,13 @@ ConfigureLogPath () {
     fi
     
     if [ ! -r $APICLIlogpathroot ] ; then
-        mkdir $APICLIlogpathroot
+        mkdir -p -v $APICLIlogpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogpathbase=$APICLIlogpathroot/$DATE
     
     if [ ! -r $APICLIlogpathbase ] ; then
-        mkdir $APICLIlogpathbase
+        mkdir -p -v $APICLIlogpathbase | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogfilepathtemp=$APICLIlogfilepath
@@ -1146,7 +1149,6 @@ ConfigureLogPath () {
     cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
     rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
     
-    return 0
 }
 
 
@@ -1347,8 +1349,7 @@ else
 fi
 
 if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-    outstring="domaintarget = '$domaintarget' " 
-    echo $outstring | tee -a -i $APICLIlogfilepath
+    echo "domaintarget = '$domaintarget' " | tee -a -i $APICLIlogfilepath
 fi
 
 Login2MgmtCLI
@@ -1414,7 +1415,7 @@ if [ ! -z "$domainnamenospace" ] && [ "$CLIparm_NODOMAINFOLDERS" != "true" ] ; t
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 else
     # NOT adding domain name to path for MDM operations
@@ -1424,7 +1425,7 @@ else
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 fi
 
@@ -1463,7 +1464,7 @@ else
 fi
 
 if [ ! -r $APICLIpathexport ] ; then
-    mkdir $APICLIpathexport
+    mkdir -p -v $APICLIpathexport >> $templogfilepath
 fi
 
 echo >> $templogfilepath
@@ -1479,7 +1480,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     export APICLIpathexport=$APICLIpathexport/$APICLIdetaillvl
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 
     export APICLIJSONpathexportwip=
@@ -1489,7 +1490,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
         export APICLIJSONpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLIJSONpathexportwip ] ; then
-            mkdir $APICLIJSONpathexportwip
+            mkdir -p -v $APICLIJSONpathexportwip >> $templogfilepath
         fi
     fi
 else    
@@ -1513,7 +1514,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
         export APICLICSVpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLICSVpathexportwip ] ; then
-            mkdir $APICLICSVpathexportwip
+            mkdir -p -v $APICLICSVpathexportwip >> $templogfilepath
         fi
     fi
 else

@@ -3,12 +3,12 @@
 # SCRIPT Template for CLI Operations for command line parameters handling
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
 export APIActionsScriptVersion=v00x29x00
-ActionScriptName=cmd_line_parameters_handler.action.common.004.v$ScriptVersion
+ActionScriptName=cmd_line_parameters_handler.action.common.005.v$ScriptVersion
 
 # =================================================================================================
 # Validate Actions Script version is correct for caller
@@ -779,12 +779,12 @@ dumpcliparmparseresults $@
 #
 
 #
-# Was help requested, if so show it and exit
+# Was help requested, if so show it and return
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
     # Show Help
     doshowhelp
-    exit 255 
+    return 255 
 fi
 
 #

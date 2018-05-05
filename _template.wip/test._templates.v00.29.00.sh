@@ -3,7 +3,7 @@
 # SCRIPT Base Template testing script for automated execution of standard tests
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
@@ -74,7 +74,7 @@ SetupTestingLogFile () {
     export Testinglogfile=$Testinglogfilebase/$Testinglogfilename
     
     if [ ! -r $Testinglogfilebase ] ; then
-        mkdir $Testinglogfilebase
+        mkdir -p -v $Testinglogfilebase
     fi
     
     touch $Testinglogfile
@@ -329,6 +329,30 @@ DetermineGaiaVersionAndInstallType () {
 
 
 # -------------------------------------------------------------------------------------------------
+# ResetExternalParameters - Reset Externally controllable parameters
+# -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
+ResetExternalParameters () {
+    #
+    # Reset Externally controllable parameters
+    #
+
+    export APISCRIPTVERBOSE=
+    export NOWAIT=
+    export CLEANUPWIP=
+    export NODOMAINFOLDERS=
+    export CSVEXPORTADDIGNOREERR=
+
+}
+
+#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-04
+
+
+# -------------------------------------------------------------------------------------------------
 # HandleScriptTesting_CLIParms - repeated proceedure
 # -------------------------------------------------------------------------------------------------
 
@@ -376,6 +400,8 @@ HandleScriptTesting_CLIParms () {
     # Screen width template for sizing, default width of 80 characters assumed
     #
 
+    ResetExternalParameters
+
     . $Script2TestFilepath -?
     . $Script2TestFilepath --help
 
@@ -398,6 +424,8 @@ HandleScriptTesting_CLIParms () {
         . $Script2TestFilepath --port $TestSSLport -v -u _apiadmin
         . $Script2TestFilepath --port $TestSSLport -v -u _apiadmin -p Cpwins1!
         
+        ResetExternalParameters
+
         . $Script2TestFilepath --port $TestSSLport -v --NOWAIT -r
         . $Script2TestFilepath --port $TestSSLport -v --NOWAIT -u _apiadmin
         . $Script2TestFilepath --port $TestSSLport -v --NOWAIT -u _apiadmin -p Cpwins1!
@@ -408,6 +436,8 @@ HandleScriptTesting_CLIParms () {
             . $Script2TestFilepath -v --port $TestSSLport --NOWAIT -r --CLEANUPWIP --NODOMAINFOLDERS --CSVEXPORTADDIGNOREERR
             . $Script2TestFilepath -v --port $TestSSLport --NOWAIT -r --CLEANUPWIP --NODOMAINFOLDERS --CSVEXPORTADDIGNOREERR --SO
             . $Script2TestFilepath -v --port $TestSSLport --NOWAIT -r --CLEANUPWIP --NODOMAINFOLDERS --CSVEXPORTADDIGNOREERR --NSO
+
+            ResetExternalParameters
 
             . $Script2TestFilepath -v --port $TestSSLport --NOWAIT -r -l $Testinglogfilebase -o $Testinglogfilebase/output -x $Testinglogfilebase/export -i /var/tmp/import.csv -k /var/tmp/delete.csv
 

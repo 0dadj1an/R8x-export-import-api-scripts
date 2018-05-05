@@ -3,7 +3,7 @@
 # SCRIPT Template for CLI Operations for command line parameters handling
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-03
+ScriptDate=2018-05-04
 
 #
 
@@ -27,7 +27,12 @@ else
     echo 'Calling Script version : '$APIScriptVersion | tee -a -i $APICLIlogfilepath
     echo 'Actions Script version : '$APIActionsScriptVersion | tee -a -i $APICLIlogfilepath
     echo | tee -a -i $APICLIlogfilepath
-    exit 255
+    echo 'Critical Error - Exiting Script !!!!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+
+    exit 250
 fi
 
 
@@ -149,7 +154,7 @@ fi
 #
 # --CLEANUPWIP
 # --NODOMAINFOLDERS
-# --ADDERRIGNORECSVEXPORT
+# --CSVEXPORTADDIGNOREERR
 #
 
 export SHOWHELP=false
@@ -174,7 +179,7 @@ export CLIparm_NoSystemObjects=true
 export CLIparm_NOWAIT=
 export CLIparm_CLEANUPWIP=
 export CLIparm_NODOMAINFOLDERS=
-export CLIparm_ADDERRIGNORECSVEXPORT=
+export CLIparm_CSVEXPORTADDIGNOREERR=
 
 # --NOWAIT
 #
@@ -224,20 +229,20 @@ else
     export CLIparm_NODOMAINFOLDERS=false
 fi
 
-# --ADDERRIGNORECSVEXPORT
+# --CSVEXPORTADDIGNOREERR
 #
-if [ -z "$ADDERRIGNORECSVEXPORT" ]; then
-    # ADDERRIGNORECSVEXPORT mode not set from shell level
-    export CLIparm_ADDERRIGNORECSVEXPORT=false
-elif [ x"`echo "$ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
-    # ADDERRIGNORECSVEXPORT mode set OFF from shell level
-    export CLIparm_ADDERRIGNORECSVEXPORT=false
-elif [ x"`echo "$ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
-    # ADDERRIGNORECSVEXPORT mode set ON from shell level
-    export CLIparm_ADDERRIGNORECSVEXPORT=true
+if [ -z "$CSVEXPORTADDIGNOREERR" ]; then
+    # CSVEXPORTADDIGNOREERR mode not set from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=false
+elif [ x"`echo "$CSVEXPORTADDIGNOREERR" | tr '[:upper:]' '[:lower:]'`" = x"false" ] ; then
+    # CSVEXPORTADDIGNOREERR mode set OFF from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=false
+elif [ x"`echo "$CSVEXPORTADDIGNOREERR" | tr '[:upper:]' '[:lower:]'`" = x"true" ] ; then
+    # CSVEXPORTADDIGNOREERR mode set ON from shell level
+    export CLIparm_CSVEXPORTADDIGNOREERR=true
 else
     # CLEANUPWIP mode set to wrong value from shell level
-    export CLIparm_ADDERRIGNORECSVEXPORT=false
+    export CLIparm_CSVEXPORTADDIGNOREERR=false
 fi
 
 export REMAINS=
@@ -296,12 +301,12 @@ dumpcliparmparseresults () {
     export outstring=$outstring"NOWAIT                  ='$NOWAIT' \n "
     export outstring=$outstring"CLEANUPWIP              ='$CLEANUPWIP' \n "
     export outstring=$outstring"NODOMAINFOLDERS         ='$NODOMAINFOLDERS' \n "
-    export outstring=$outstring"ADDERRIGNORECSVEXPORT   ='$ADDERRIGNORECSVEXPORT' \n "
+    export outstring=$outstring"CSVEXPORTADDIGNOREERR   ='$CSVEXPORTADDIGNOREERR' \n "
     export outstring=$outstring" \n "
     export outstring=$outstring"CLIparm_NOWAIT          ='$CLIparm_NOWAIT' \n "
     export outstring=$outstring"CLIparm_CLEANUPWIP      ='$CLIparm_CLEANUPWIP' \n "
     export outstring=$outstring"CLIparm_NODOMAINFOLDERS ='$CLIparm_NODOMAINFOLDERS' \n "
-    export outstring=$outstring"C_ADDERRIGNORECSVEXPORT ='$CLIparm_ADDERRIGNORECSVEXPORT' \n "
+    export outstring=$outstring"C_CSVEXPORTADDIGNOREERR ='$CLIparm_CSVEXPORTADDIGNOREERR' \n "
     export outstring=$outstring" \n "
     export outstring=$outstring"remains                 ='$REMAINS' \n "
     
@@ -333,11 +338,12 @@ dumpcliparmparseresults () {
 #
 # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-3
 
+
 # -------------------------------------------------------------------------------------------------
 # dumprawcliparms
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 dumprawcliparms () {
@@ -350,30 +356,13 @@ dumprawcliparms () {
     echo | tee -a -i $APICLIlogfilepath
 }
 
-
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
 
+# =================================================================================================
 # -------------------------------------------------------------------------------------------------
-# Testing
-# -------------------------------------------------------------------------------------------------
-
-
-#
-# Testing
-#
-if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-    dumprawcliparms $@
-fi
-
-
-#
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
-
-# -------------------------------------------------------------------------------------------------
+# START:  Common Help display proceedure
 # -------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------------------
@@ -465,7 +454,7 @@ doshowhelp () {
     echo '  No waiting in verbose mode --NOWAIT'
     echo '  Remove WIP folders after   --CLEANUPWIP'
     echo '  No domain name in folders  --NODOMAINFOLDERS'
-    echo '  CSV export add err handler --ADDERRIGNORECSVEXPORT'
+    echo '  CSV export add err handler --CSVEXPORTADDIGNOREERR'
     echo
     echo '  session_file_filepath = fully qualified file path for session file'
     echo '  log_path = fully qualified folder path for log files'
@@ -544,14 +533,24 @@ doshowhelp () {
 # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 # -------------------------------------------------------------------------------------------------
+# END:  Common Help display proceedure
+# -------------------------------------------------------------------------------------------------
+# =================================================================================================
+
+# -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------------------
 # Process command line parameters and set appropriate values
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
+
+if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
+    # Verbose mode ON
+    dumprawcliparms "@$"    
+fi
 
 while [ -n "$1" ]; do
     # Copy so we can modify it (can't modify $1)
@@ -596,11 +595,9 @@ while [ -n "$1" ]; do
 #               ;;
             --SO | --system-objects )
                 CLIparm_NoSystemObjects=false
-                shift
                 ;;
             --NSO | --no-system-objects )
                 CLIparm_NoSystemObjects=true
-                shift
                 ;;
             --CLEANUPWIP )
                 CLIparm_CLEANUPWIP=true
@@ -608,8 +605,8 @@ while [ -n "$1" ]; do
             --NODOMAINFOLDERS )
                 CLIparm_NODOMAINFOLDERS=true
                 ;;
-            --ADDERRIGNORECSVEXPORT )
-                CLIparm_ADDERRIGNORECSVEXPORT=true
+            --CSVEXPORTADDIGNOREERR )
+                CLIparm_CSVEXPORTADDIGNOREERR=true
                 ;;
             # Handle --flag=value opts like this
             -u=* | --user=* )
@@ -736,7 +733,7 @@ eval set -- $REMAINS
 # -------------------------------------------------------------------------------------------------
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04-2
 
 # MODIFIED 2018-05-03-2 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
@@ -765,7 +762,7 @@ export CLIparm_NoSystemObjects=`echo "$CLIparm_NoSystemObjects" | tr '[:upper:]'
 export CLIparm_NOWAIT=`echo "$CLIparm_NOWAIT" | tr '[:upper:]' '[:lower:]'`
 export CLIparm_CLEANUPWIP=`echo "$CLIparm_CLEANUPWIP" | tr '[:upper:]' '[:lower:]'`
 export CLIparm_NODOMAINFOLDERS=`echo "$CLIparm_NODOMAINFOLDERS" | tr '[:upper:]' '[:lower:]'`
-export CLIparm_ADDERRIGNORECSVEXPORT=`echo "$CLIparm_ADDERRIGNORECSVEXPORT" | tr '[:upper:]' '[:lower:]'`
+export CLIparm_CSVEXPORTADDIGNOREERR=`echo "$CLIparm_CSVEXPORTADDIGNOREERR" | tr '[:upper:]' '[:lower:]'`
 
 export REMAINS=$REMAINS
 
@@ -775,10 +772,10 @@ dumpcliparmparseresults $@
 # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-03-2
 
 # -------------------------------------------------------------------------------------------------
-# Handle request for help and exit
+# Handle request for help (common) and exit
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
@@ -791,7 +788,7 @@ if [ x"$SHOWHELP" = x"true" ] ; then
 fi
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------

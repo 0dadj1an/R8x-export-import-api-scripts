@@ -3,7 +3,7 @@
 # SCRIPT Object exports host object interfaces to CSV file for API CLI Operations
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
@@ -566,23 +566,23 @@ CommandLineParameterHandler "$@"
 
 
 # -------------------------------------------------------------------------------------------------
-# Local Handle request for help and exit
+# Local Handle request for help and return
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
-# Was help requested, if so show local content and exit
+# Was help requested, if so show local content and return
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
     # Show Local Help
     doshowlocalhelp
-    exit 255 
+    return 255 
 fi
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1032,7 +1032,7 @@ SetupLogin2MgmtCLI () {
 # Login2MgmtCLI - Process Login to Management CLI
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 Login2MgmtCLI () {
@@ -1052,7 +1052,7 @@ Login2MgmtCLI () {
         echo | tee -a -i $APICLIlogfilepath
         echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
-        exit $SUBEXITCODE
+        return $SUBEXITCODE
     
     else
         echo | tee -a -i $APICLIlogfilepath
@@ -1062,7 +1062,7 @@ Login2MgmtCLI () {
 }
 
 #
-# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1087,6 +1087,8 @@ Login2MgmtCLI () {
 # ConfigureRootPath - Configure root and base path
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-04 -
+
 ConfigureRootPath () {
 
     # ---------------------------------------------------------
@@ -1101,22 +1103,23 @@ ConfigureRootPath () {
     fi
     
     if [ ! -r $APICLIpathroot ] ; then
-        mkdir $APICLIpathroot
+        mkdir -p -v $APICLIpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIpathbase=$APICLIpathroot/$DATE
     
     if [ ! -r $APICLIpathbase ] ; then
-        mkdir $APICLIpathbase
+        mkdir -p -v $APICLIpathbase | tee -a -i $APICLIlogfilepath
     fi
     
-    return 0
 }
 
 
 # -------------------------------------------------------------------------------------------------
 # ConfigureLogPath - Configure log file path and handle temporary log file
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 -
 
 ConfigureLogPath () {
 
@@ -1131,13 +1134,13 @@ ConfigureLogPath () {
     fi
     
     if [ ! -r $APICLIlogpathroot ] ; then
-        mkdir $APICLIlogpathroot
+        mkdir -p -v $APICLIlogpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogpathbase=$APICLIlogpathroot/$DATE
     
     if [ ! -r $APICLIlogpathbase ] ; then
-        mkdir $APICLIlogpathbase
+        mkdir -p -v $APICLIlogpathbase | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogfilepathtemp=$APICLIlogfilepath
@@ -1146,7 +1149,6 @@ ConfigureLogPath () {
     cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
     rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
     
-    return 0
 }
 
 
@@ -1347,8 +1349,7 @@ else
 fi
 
 if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-    outstring="domaintarget = '$domaintarget' " 
-    echo $outstring | tee -a -i $APICLIlogfilepath
+    echo "domaintarget = '$domaintarget' " | tee -a -i $APICLIlogfilepath
 fi
 
 Login2MgmtCLI
@@ -1414,7 +1415,7 @@ if [ ! -z "$domainnamenospace" ] && [ "$CLIparm_NODOMAINFOLDERS" != "true" ] ; t
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 else
     # NOT adding domain name to path for MDM operations
@@ -1424,7 +1425,7 @@ else
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 fi
 
@@ -1463,7 +1464,7 @@ else
 fi
 
 if [ ! -r $APICLIpathexport ] ; then
-    mkdir $APICLIpathexport
+    mkdir -p -v $APICLIpathexport >> $templogfilepath
 fi
 
 echo >> $templogfilepath
@@ -1479,7 +1480,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     export APICLIpathexport=$APICLIpathexport/$APICLIdetaillvl
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 
     export APICLIJSONpathexportwip=
@@ -1489,7 +1490,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
         export APICLIJSONpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLIJSONpathexportwip ] ; then
-            mkdir $APICLIJSONpathexportwip
+            mkdir -p -v $APICLIJSONpathexportwip >> $templogfilepath
         fi
     fi
 else    
@@ -1513,7 +1514,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
         export APICLICSVpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLICSVpathexportwip ] ; then
-            mkdir $APICLICSVpathexportwip
+            mkdir -p -v $APICLICSVpathexportwip >> $templogfilepath
         fi
     fi
 else
@@ -1571,7 +1572,7 @@ echo | tee -a -i $APICLIlogfilepath
 # SetupExportObjectsToCSVviaJQ
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2017-10-27 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 # The SetupExportObjectsToCSVviaJQ is the setup actions for the script's repeated actions.
@@ -1600,97 +1601,94 @@ SetupExportObjectsToCSVviaJQ () {
 
     
     if [ ! -r $APICLICSVpathexportwip ] ; then
-        mkdir $APICLICSVpathexportwip
+        mkdir -p -v $APICLICSVpathexportwip | tee -a -i $APICLIlogfilepath
     fi
 
     if [ -r $APICLICSVfile ] ; then
-        rm $APICLICSVfile
+        rm $APICLICSVfile >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfileheader ] ; then
-        rm $APICLICSVfileheader
+        rm $APICLICSVfileheader >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfiledata ] ; then
-        rm $APICLICSVfiledata
+        rm $APICLICSVfiledata >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfilesort ] ; then
-        rm $APICLICSVfilesort
+        rm $APICLICSVfilesort >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfileoriginal ] ; then
-        rm $APICLICSVfileoriginal
+        rm $APICLICSVfileoriginal >> $APICLIlogfilepath
     fi
     
-    echo
-    echo "Creat $APICLIobjectstype CSV File : $APICLICSVfile"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Creat $APICLIobjectstype CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     #
     # Troubleshooting output
     #
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        echo '$CSVFileHeader' - $CSVFileHeader
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '$CSVFileHeader' - $CSVFileHeader | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     
     fi
     
-    echo $CSVFileHeader > $APICLICSVfileheader
-    echo
+    echo $CSVFileHeader > $APICLICSVfileheader | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2017-10-27
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 
 # -------------------------------------------------------------------------------------------------
+# The FinalizeExportObjectsToCSVviaJQ
+# -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
-
-# The FinalizeExportObjectsToCSVviaJQ is the finaling actions for the script's repeated actions.
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 FinalizeExportObjectsToCSVviaJQ () {
     #
-    # Screen width template for sizing, default width of 80 characters assumed
+    # The FinalizeExportObjectsToCSVviaJQ is the finaling actions for the script's repeated actions.
     #
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 
-    if [ ! -r $APICLICSVfileheader ] ; then
+    if [ ! -r "$APICLICSVfileheader" ] ; then
         # Uh, Oh, something went wrong, no header file
-        echo
-        echo '!!!! Error header file missing : '$APICLICSVfileheader
-        echo 'Terminating!'
-        echo
-        exit 254
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!!!! Error header file missing : '$APICLICSVfileheader | tee -a -i $APICLIlogfilepath
+        echo 'Terminating!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        return 254
         
-    elif [ ! -r $APICLICSVfiledata ] ; then
+    elif [ ! -r "$APICLICSVfiledata" ] ; then
         # Uh, Oh, something went wrong, no data file
-        echo
-        echo '!!!! Error data file missing : '$APICLICSVfiledata
-        echo 'Terminating!'
-        echo
-        exit 253
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!!!! Error data file missing : '$APICLICSVfiledata | tee -a -i $APICLIlogfilepath
+        echo 'Terminating!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        return 253
         
-    elif [ ! -s $APICLICSVfiledata ] ; then
+    elif [ ! -s "$APICLICSVfiledata" ] ; then
         # data file is empty, nothing was found
-        echo
-        echo '!! data file is empty : '$APICLICSVfiledata
-        echo 'Skipping CSV creation!'
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!! data file is empty : '$APICLICSVfiledata | tee -a -i $APICLIlogfilepath
+        echo 'Skipping CSV creation!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         return 0
         
     fi
 
-    echo
-    echo "Sort data and build CSV export file"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Sort data and build CSV export file" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     cat $APICLICSVfileheader > $APICLICSVfileoriginal
     cat $APICLICSVfiledata >> $APICLICSVfileoriginal
@@ -1700,31 +1698,30 @@ FinalizeExportObjectsToCSVviaJQ () {
     cat $APICLICSVfileheader > $APICLICSVfile
     cat $APICLICSVfilesort >> $APICLICSVfile
     
-    echo
-    echo "Done creating $APICLIobjectstype CSV File : $APICLICSVfile"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Done creating $APICLIobjectstype CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    head $APICLICSVfile
-    echo
-    echo
+    head $APICLICSVfile | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
    
     
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-03
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 
 # -------------------------------------------------------------------------------------------------
+# ExportObjectsToCSVviaJQ
+# -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 # The ExportObjectsToCSVviaJQ is the meat of the script's repeated actions.
@@ -1739,26 +1736,22 @@ ExportObjectsToCSVviaJQ () {
     if [[ $number_of_objects -le 1 ]] ; then
         # no objects of this type
  
-        echo "No objects of type $APICLIobjecttype to process, skipping..."
+        echo "No objects of type $APICLIobjecttype to process, skipping..." | tee -a -i $APICLIlogfilepath
 
         return 0
        
     else
         # we have objects to handle
-        echo "Processing $number_of_objects $APICLIobjecttype objects..."
-        echo
-   fi
+        echo "Processing $number_of_objects $APICLIobjecttype objects..." | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+    fi
 
     SetupExportObjectsToCSVviaJQ
-    
-    #
-    # Troubleshooting output
-    #
-    if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-        # Verbose mode ON
-        echo
-        echo '$CSVJQparms' - $CSVJQparms
-        echo
+    errorreturn=$?
+    if [ $errorreturn != 0 ] ; then
+        # Something went wrong, terminate
+        echo 'Problem found in procedure SetupExportObjectsToCSVviaJQ! error return = '$errorreturn | tee -a -i $APICLIlogfilepath
+        return $errorreturn
     fi
     
     export MgmtCLI_Base_OpParms="--format json -s $APICLIsessionfile"
@@ -1767,34 +1760,34 @@ ExportObjectsToCSVviaJQ () {
     export MgmtCLI_Show_OpParms="details-level \"full\" $MgmtCLI_Base_OpParms"
     
     # System Object selection operands
-    # export systemobjectselector='select(."meta-info"."creator" != "System")'
     export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
 
     objectstotal=$(mgmt_cli show $APICLIobjectstype limit 1 offset 0 details-level "standard" --format json -s $APICLIsessionfile | $JQ ".total")
 
     objectstoshow=$objectstotal
 
-    echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:"
+    echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:" | tee -a -i $APICLIlogfilepath
 
     objectslefttoshow=$objectstoshow
     currentoffset=0
 
-    echo
-    echo "Export $APICLIobjectstype to CSV File"
-    echo "  mgmt_cli parameters : $MgmtCLI_Show_OpParms"
-    echo "  and dump to $APICLICSVfile"
-    echo
-    
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Export $APICLIobjectstype to CSV File" | tee -a -i $APICLIlogfilepath
+    echo "  and dump to $APICLICSVfile" | tee -a -i $APICLIlogfilepath
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-        echo "  System Object Selector : "$systemobjectselector
+        # Verbose mode ON
+        echo "  mgmt_cli parameters : $MgmtCLI_Show_OpParms" | tee -a -i $APICLIlogfilepath
+        echo '  $CSVJQparms' - $CSVJQparms | tee -a -i $APICLIlogfilepath
+        echo "  System Object Selector : "$systemobjectselector | tee -a -i $APICLIlogfilepath
     fi
+    echo | tee -a -i $APICLIlogfilepath
 
     while [ $objectslefttoshow -ge 1 ] ; do
         # we have objects to process
-        echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currentoffset of $objectslefttoshow remaining!"
+        echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currentoffset of $objectslefttoshow remaining!" | tee -a -i $APICLIlogfilepath
 
-#        mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
-#        errorreturn=$?
+        #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
+        #errorreturn=$?
 
         if [ x"$NoSystemObjects" = x"true" ] ; then
             # Ignore System Objects
@@ -1809,25 +1802,25 @@ ExportObjectsToCSVviaJQ () {
 
         if [ $errorreturn != 0 ] ; then
             # Something went wrong, terminate
-            exit $errorreturn
+            echo 'Problem during mgmt_cli operation! error return = '$errorreturn | tee -a -i $APICLIlogfilepath
+            return $errorreturn
         fi
 
         objectslefttoshow=`expr $objectslefttoshow - $APICLIObjectLimit`
         currentoffset=`expr $currentoffset + $APICLIObjectLimit`
     done
 
-    echo
-    
     FinalizeExportObjectsToCSVviaJQ
     errorreturn=$?
     if [ $errorreturn != 0 ] ; then
         # Something went wrong, terminate
-        exit $errorreturn
+        echo 'Problem found in procedure FinalizeExportObjectsToCSVviaJQ! error return = '$errorreturn | tee -a -i $APICLIlogfilepath
+        return $errorreturn
     fi
     
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         echo
-        echo "Done with Exporting $APICLIobjectstype to CSV File : $APICLICSVfile"
+        echo "Done with Exporting $APICLIobjectstype to CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
     
         if [ "$CLIparm_NOWAIT" != "true" ] ; then
             read -t $WAITTIME -n 1 -p "Any key to continue.  Automatic continue after $WAITTIME seconds : " anykey
@@ -1835,40 +1828,38 @@ ExportObjectsToCSVviaJQ () {
     
     fi
     
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-03
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 
 # -------------------------------------------------------------------------------------------------
 # GetNumberOfObjectsviaJQ
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
-
-# The GetNumberOfObjectsviaJQ is the obtains the number of objects for that type indicated.
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 GetNumberOfObjectsviaJQ () {
-
+    #
+    # The GetNumberOfObjectsviaJQ obtains the number of objects for that object type indicated.
+    #
+    
     export objectstotal=
-    export objectsfrom=
-    export objectsto=
     
     #
     # Troubleshooting output
     #
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        echo '$CSVJQparms' - $CSVJQparms
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo 'Get objectstotal of object type '$APICLIobjectstype | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     fi
     
     objectstotal=$(mgmt_cli show $APICLIobjectstype limit 1 offset 0 details-level "standard" --format json -s $APICLIsessionfile | $JQ ".total")
@@ -1876,19 +1867,20 @@ GetNumberOfObjectsviaJQ () {
 
     if [ $errorreturn != 0 ] ; then
         # Something went wrong, terminate
-        exit $errorreturn
+        echo 'Problem during mgmt_cli objectstotal operation! error return = '$errorreturn | tee -a -i $APICLIlogfilepath
+        return $errorreturn
     fi
     
     export number_of_objects=$objectstotal
 
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-03
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 
@@ -1923,6 +1915,9 @@ GetNumberOfObjectsviaJQ () {
 # SetupExportComplexObjectsToCSVviaJQ
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
 # The SetupExportComplexObjectsToCSVviaJQ is the setup actions for the script's repeated actions.
 #
 
@@ -1945,44 +1940,44 @@ SetupExportComplexObjectsToCSVviaJQ () {
 
     
     if [ ! -r $APICLICSVpathexportwip ] ; then
-        mkdir $APICLICSVpathexportwip
+        mkdir -p -v $APICLICSVpathexportwip | tee -a -i $APICLIlogfilepath
     fi
 
     if [ -r $APICLICSVfile ] ; then
-        rm $APICLICSVfile
+        rm $APICLICSVfile >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfileheader ] ; then
-        rm $APICLICSVfileheader
+        rm $APICLICSVfileheader >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfiledata ] ; then
-        rm $APICLICSVfiledata
+        rm $APICLICSVfiledata >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfilesort ] ; then
-        rm $APICLICSVfilesort
+        rm $APICLICSVfilesort >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfileoriginal ] ; then
-        rm $APICLICSVfileoriginal
+        rm $APICLICSVfileoriginal >> $APICLIlogfilepath
     fi
     
-    echo
-    echo "Creat $APICLIcomplexobjectstype CSV File : $APICLICSVfile"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Creat $APICLIcomplexobjectstype CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     #
     # Troubleshooting output
     #
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        echo '$CSVFileHeader' - $CSVFileHeader
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '$CSVFileHeader' - $CSVFileHeader | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     
     fi
     
-    echo $CSVFileHeader > $APICLICSVfileheader
-    echo
+    echo $CSVFileHeader > $APICLICSVfileheader | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
@@ -1991,52 +1986,50 @@ SetupExportComplexObjectsToCSVviaJQ () {
 
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # FinalizeExportComplexObjectsToCSVviaJQ
 # -------------------------------------------------------------------------------------------------
 
-# The FinalizeExportComplexObjectsToCSVviaJQ is the finaling actions for the script's repeated actions.
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 FinalizeExportComplexObjectsToCSVviaJQ () {
     #
-    # Screen width template for sizing, default width of 80 characters assumed
+    # The FinalizeExportComplexObjectsToCSVviaJQ is the finaling actions for the script's repeated actions.
     #
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 
-    if [ ! -r $APICLICSVfileheader ] ; then
+    if [ ! -r "$APICLICSVfileheader" ] ; then
         # Uh, Oh, something went wrong, no header file
-        echo
-        echo '!!!! Error header file missing : '$APICLICSVfileheader
-        echo 'Terminating!'
-        echo
-        exit 254
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!!!! Error header file missing : '$APICLICSVfileheader | tee -a -i $APICLIlogfilepath
+        echo 'Terminating!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        return 254
         
-    elif [ ! -r $APICLICSVfiledata ] ; then
+    elif [ ! -r "$APICLICSVfiledata" ] ; then
         # Uh, Oh, something went wrong, no data file
-        echo
-        echo '!!!! Error data file missing : '$APICLICSVfiledata
-        echo 'Terminating!'
-        echo
-        exit 253
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!!!! Error data file missing : '$APICLICSVfiledata | tee -a -i $APICLIlogfilepath
+        echo 'Terminating!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        return 253
         
-    elif [ ! -s $APICLICSVfiledata ] ; then
+    elif [ ! -s "$APICLICSVfiledata" ] ; then
         # data file is empty, nothing was found
-        echo
-        echo '!! data file is empty : '$APICLICSVfiledata
-        echo 'Skipping CSV creation!'
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!! data file is empty : '$APICLICSVfiledata | tee -a -i $APICLIlogfilepath
+        echo 'Skipping CSV creation!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         return 0
         
     fi
 
-    echo
-    echo "Sort data and build CSV export file"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Sort data and build CSV export file" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     cat $APICLICSVfileheader > $APICLICSVfileoriginal
     cat $APICLICSVfiledata >> $APICLICSVfileoriginal
@@ -2046,26 +2039,24 @@ FinalizeExportComplexObjectsToCSVviaJQ () {
     cat $APICLICSVfileheader > $APICLICSVfile
     cat $APICLICSVfilesort >> $APICLICSVfile
     
-    echo
-    echo "Done creating $APICLIcomplexobjectstype CSV File : $APICLICSVfile"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Done creating $APICLIcomplexobjectstype CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    head $APICLICSVfile
-    echo
-    echo
-   
+    head $APICLICSVfile | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-
-    echo
+    
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
-    #
 }
 
+# -------------------------------------------------------------------------------------------------
+
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -2075,8 +2066,7 @@ FinalizeExportComplexObjectsToCSVviaJQ () {
 # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\  ADDED 2017-11-09
 
 
-# MODIFIED 2017-11-09 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
+# MODIFIED 2018-05-05 -
 
 # -------------------------------------------------------------------------------------------------
 # host interfaces
@@ -2094,6 +2084,9 @@ export APICLIexportnameaddon=
 # -------------------------------------------------------------------------------------------------
 # SetupGetHostInterfaces proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # SetupGetHostInterfaces
@@ -2121,10 +2114,17 @@ SetupGetHostInterfaces () {
     
     return 0
 }
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
+
     
 # -------------------------------------------------------------------------------------------------
 # FinalizeGetHostInterfaces proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # FinalizeGetHostInterfaces
@@ -2135,18 +2135,22 @@ FinalizeGetHostInterfaces () {
     errorreturn=$?
     if [ $errorreturn != 0 ] ; then
         # Something went wrong, terminate
-        exit $errorreturn
+        return $errorreturn
     fi
     
     return 0
 }
-    
-# MODIFIED 2018-03-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
 
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
+
+    
 # -------------------------------------------------------------------------------------------------
 # PopulateArrayOfHostInterfaces proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # PopulateArrayOfHostInterfaces populates array of host objects for further processing.
@@ -2161,12 +2165,9 @@ PopulateArrayOfHostInterfaces () {
     # export systemobjectselector='select(."meta-info"."creator" != "System")'
     export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
     
-    echo
-    echo "  $APICLIobjectstype - Populate up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!"
-    echo
-    #echo >> $APICLIlogfilepath
-    #echo "  $APICLIobjectstype - Populate up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!" >> $APICLIlogfilepath
-    #echo >> $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo "  $APICLIobjectstype - Populate up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
 
     # MGMT_CLI_HOSTS_STRING is a string with multiple lines. Each line contains a name of a host.
     # in this example the output of mgmt_cli is not sent to a file, instead it is passed to jq directly using a pipe.
@@ -2187,24 +2188,23 @@ PopulateArrayOfHostInterfaces () {
     
      if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        #echo >> $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
 
         # Output list of all hosts found - Header
-        echo -n '. $line, '
-        echo -n '$(eval echo $line), '
-        echo -n 'arraylength, '
-        echo -n 'arrayelement, '
-        #echo -n '$(eval echo ${ALLHOSTARR[${arrayelement}]}) '
-        echo -n '$NUM_HOST_INTERFACES, NUM_HOST_INTERFACES > 0 '
-        echo
+        echo -n '. $line, ' | tee -a -i $APICLIlogfilepath
+        echo -n '$(eval echo $line), ' | tee -a -i $APICLIlogfilepath
+        echo -n 'arraylength, ' | tee -a -i $APICLIlogfilepath
+        echo -n 'arrayelement, ' | tee -a -i $APICLIlogfilepath
+        #echo -n '$(eval echo ${ALLHOSTARR[${arrayelement}]}) ' | tee -a -i $APICLIlogfilepath
+        echo -n '$NUM_HOST_INTERFACES, NUM_HOST_INTERFACES > 0 ' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     fi
 
     while read -r line; do
 
         ALLHOSTSARR+=("$line")
 
-        echo -n '.'
+        echo -n '.' | tee -a -i $APICLIlogfilepath
 
         arraylength=${#ALLHOSTSARR[@]}
         arrayelement=$((arraylength-1))
@@ -2213,11 +2213,11 @@ PopulateArrayOfHostInterfaces () {
         if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
             # Verbose mode ON
             # Output list of all hosts found
-            echo -n ' '"$line"', '
-            echo -n "$(eval echo $line)"', '
-            echo -n "$arraylength"', '
-            echo -n "$arrayelement"', '
-            #echo -n "$(eval echo ${ALLHOSTARR[${arrayelement}]})"', '
+            echo -n ' '"$line"', ' | tee -a -i $APICLIlogfilepath
+            echo -n "$(eval echo $line)"', ' | tee -a -i $APICLIlogfilepath
+            echo -n "$arraylength"', ' | tee -a -i $APICLIlogfilepath
+            echo -n "$arrayelement"', ' | tee -a -i $APICLIlogfilepath
+            #echo -n "$(eval echo ${ALLHOSTARR[${arrayelement}]})"', ' | tee -a -i $APICLIlogfilepath
         fi
 
         #INTERFACES_COUNT=$(mgmt_cli show $APICLIobjecttype name "$(eval echo ${ALLHOSTARR[${arrayelement}]})" details-level "full" -s $APICLIsessionfile --format json | $JQ ".interfaces | length")
@@ -2226,34 +2226,30 @@ PopulateArrayOfHostInterfaces () {
         NUM_HOST_INTERFACES=$INTERFACES_COUNT
 
         if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-            echo -n "$NUM_HOST_INTERFACES"', '
+            echo -n "$NUM_HOST_INTERFACES"', ' | tee -a -i $APICLIlogfilepath
         else
-            echo -n "$NUM_HOST_INTERFACES"
+            echo -n "$NUM_HOST_INTERFACES" | tee -a -i $APICLIlogfilepath
         fi
 
         if [ $NUM_HOST_INTERFACES -gt 0 ]; then
             HOSTSARR+=("$line")
             let HostInterfacesCount=HostInterfacesCount+$NUM_HOST_INTERFACES
-            echo -n '!'
+            echo -n '!' | tee -a -i $APICLIlogfilepath
         else
-            echo -n '-'
+            echo -n '-' | tee -a -i $APICLIlogfilepath
         fi
 
          if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
             # Verbose mode ON
-            echo
-            #echo >> $APICLIlogfilepath
+            echo | tee -a -i $APICLIlogfilepath
         fi
 
     done <<< "$MGMT_CLI_HOSTS_STRING"
 
-     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
+    if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        #echo >> $APICLIlogfilepath
-       
-        echo 'HostInterfacesCount = '$HostInterfacesCount
-        #echo 'HostInterfacesCount = '$HostInterfacesCount >> $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        echo 'HostInterfacesCount = '$HostInterfacesCount | tee -a -i $APICLIlogfilepath
     fi
 
     export HostInterfacesCount=$HostInterfacesCount
@@ -2262,26 +2258,24 @@ PopulateArrayOfHostInterfaces () {
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-05
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
 
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
 
 # -------------------------------------------------------------------------------------------------
 # GetArrayOfHostInterfaces proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # GetArrayOfHostInterfaces generates an array of host objects for further processing.
 
 GetArrayOfHostInterfaces () {
     
-    echo
-    echo 'Generate array of hosts'
-    echo
-    #echo >> $APICLIlogfilepath
-    #echo 'Generate array of hosts' >> $APICLIlogfilepath
-    #echo >> $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Generate array of hosts' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     HOSTSARR=()
     ALLHOSTSARR=()
@@ -2295,8 +2289,7 @@ GetArrayOfHostInterfaces () {
 
     objectstoshow=$objectstotal
 
-    echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:"
-    #echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:" >> $APICLIlogfilepath
+    echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:" | tee -a -i $APICLIlogfilepath
 
     objectslefttoshow=$objectstoshow
 
@@ -2304,38 +2297,39 @@ GetArrayOfHostInterfaces () {
 
     while [ $objectslefttoshow -ge 1 ] ; do
         # we have objects to process
-        echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!"
-        #echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!" >> $APICLIlogfilepath
+        echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!" | tee -a -i $APICLIlogfilepath
 
         PopulateArrayOfHostInterfaces
         errorreturn=$?
         if [ $errorreturn != 0 ] ; then
             # Something went wrong, terminate
-            exit $errorreturn
+            return $errorreturn
         fi
 
         objectslefttoshow=`expr $objectslefttoshow - $APICLIObjectLimit`
         currenthostoffset=`expr $currenthostoffset + $APICLIObjectLimit`
     done
 
-    echo
-    #echo >> $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    echo
-    echo 'Final HostInterfacesCount = '$HostInterfacesCount
-    echo 'Final Host Array = '\>"${HOSTSARR[@]}"\<
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Final HostInterfacesCount = '$HostInterfacesCount | tee -a -i $APICLIlogfilepath
+    echo 'Final Host Array = '\>"${HOSTSARR[@]}"\< | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
 
     return 0
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
 
 
 # -------------------------------------------------------------------------------------------------
 # DumpArrayOfHostsObjects proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # DumpArrayOfHostsObjects outputs the array of host objects.
@@ -2347,51 +2341,43 @@ DumpArrayOfHostsObjects () {
         # Output list of all hosts found
     
         # print the elements in the array
-        echo
-        echo Dump All hosts
-        echo
-        #echo >> $APICLIlogfilepath
-        #echo All hosts >> $APICLIlogfilepath
-        #echo >> $APICLIlogfilepath
+        #echo | tee -a -i $APICLIlogfilepath
+        #echo Dump All hosts | tee -a -i $APICLIlogfilepath
+        #echo | tee -a -i $APICLIlogfilepath
+        #
+        #for i in "${ALLHOSTSARR[@]}"
+        #do
+        #    echo "$i, ${i//\'/}" | tee -a -i $APICLIlogfilepath
+        #done
         
-        for i in "${ALLHOSTSARR[@]}"
-        do
-            echo "$i, ${i//\'/}"
-            #echo "$i, ${i//\'/}" >> $APICLIlogfilepath
-        done
-        
-        echo
-        echo hosts with interfaces defined
-        echo
-        #echo >> $APICLIlogfilepath
-        #echo hosts with interfaces defined >> $APICLIlogfilepath
-        #echo >> $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        echo hosts with interfaces defined | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         
         for j in "${HOSTSARR[@]}"
         do
-            echo "$j, ${j//\'/}"
-            #echo "$j, ${j//\'/}" >> $APICLIlogfilepath
+            echo "$j, ${j//\'/}" | tee -a -i $APICLIlogfilepath
         done
         
-        echo
-        echo Done dumping hosts
-        echo
-        #echo >> $APICLIlogfilepath
-        #echo Done dumping hosts >> $APICLIlogfilepath
-        #echo >> $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        echo Done dumping hosts | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         
     fi
 
     return 0
 }
 
-
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
+
 
 # -------------------------------------------------------------------------------------------------
 # CollectInterfacesInHostObjects proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # CollectInterfacesInHostObjects outputs the host interfaces in a host in the array of host objects and collects them into the csv file.
@@ -2402,17 +2388,14 @@ CollectInterfacesInHostObjects () {
     # using bash variables in a jq expression
     #
     
-    echo
-    echo 'Use array of hosts to generate host interfaces CSV'
-    echo
-    #echo >> $APICLIlogfilepath
-    #echo 'Use array of hosts to export interfaces in each host' >> $APICLIlogfilepath
-    #echo >> $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Use array of hosts to generate host interfaces CSV' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     for i in "${HOSTSARR[@]}"
     do
-        echo
-        echo Host with interfaces "${i//\'/}"
+        echo | tee -a -i $APICLIlogfilepath
+        echo Host with interfaces "${i//\'/}" | tee -a -i $APICLIlogfilepath
     
         INTERFACES_COUNT=$(mgmt_cli show $APICLIobjecttype name "${i//\'/}" -s $APICLIsessionfile --format json | $JQ ".interfaces | length")
 
@@ -2420,19 +2403,17 @@ CollectInterfacesInHostObjects () {
     
         if [ $NUM_HOST_INTERFACES -gt 0 ]; then
             # More than zero (0) interfaces, something to process
-            echo host "${i//\'/}"' number of interfaces = '"$NUM_HOST_INTERFACES"
-            #echo host "${i//\'/}"' number of interfaces = '"$NUM_HOST_INTERFACES" >> $APICLIlogfilepath
+            echo host "${i//\'/}"' number of interfaces = '"$NUM_HOST_INTERFACES" | tee -a -i $APICLIlogfilepath
        
             COUNTER=0
             if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
                 # Verbose mode ON
-                echo $CSVFileHeader
-                #echo $CSVFileHeader >> $APICLIlogfilepath
-                fi
+                echo $CSVFileHeader | tee -a -i $APICLIlogfilepath
+            fi
 
             while [ $COUNTER -lt $NUM_HOST_INTERFACES ]; do
         
-                #echo -n '.'
+                #echo -n '.' | tee -a -i $APICLIlogfilepath
     
                 #export CSVJQparms='.["name"], .["interfaces"]['$COUNTER']["name"]'
                 #export CSVJQparms=$CSVJQparms', .["interfaces"]['$COUNTER']["subnet4"], .["interfaces"]['$COUNTER']["mask-length4"], .["interfaces"]['$COUNTER']["subnet-mask"]'
@@ -2457,19 +2438,16 @@ CollectInterfacesInHostObjects () {
                 
                 if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
                     # Verbose mode ON
-                    echo $CSVoutputline
-                    #echo $CSVoutputline >> $APICLIlogfilepath
+                    echo $CSVoutputline | tee -a -i $APICLIlogfilepath
                     fi
 
-                echo $CSVoutputline >> $APICLICSVfiledata
-                #echo $CSVoutputline >> $APICLIlogfilepath
+                echo $CSVoutputline >> $APICLICSVfiledata | tee -a -i $APICLIlogfilepath
         
                 let COUNTER=COUNTER+1
         
             done
         else
-            echo host "${i//\'/}"' number of interfaces = NONE (0 zero)'
-            #echo host "${i//\'/}"' number of interfaces = NONE (0 zero)' >> $APICLIlogfilepath
+            echo host "${i//\'/}"' number of interfaces = NONE (0 zero)' | tee -a -i $APICLIlogfilepath
         fi
     
     done
@@ -2479,15 +2457,15 @@ CollectInterfacesInHostObjects () {
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
 
-
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
 
 # -------------------------------------------------------------------------------------------------
 # GetHostInterfaces proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 #
 # GetHostInterfaces generate output of host's interfaces from existing hosts with interface objects
@@ -2510,39 +2488,40 @@ GetHostInterfaces () {
 
     else
         # No host interfaces
-        echo
-        echo '! No host interfaces found'
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '! No host interfaces found' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     fi
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
-    
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
+
+
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 objectstotal_hosts=$(mgmt_cli show $APICLIobjectstype limit 1 offset 0 details-level "standard" --format json -s $APICLIsessionfile | $JQ ".total")
 export number_hosts="$objectstotal_hosts"
 
 if [ $number_hosts -le 0 ] ; then
     # No hosts found
-    echo
-    echo 'No hosts to generate interfaces from!'
-    echo
-    echo >> $APICLIlogfilepath
-    echo 'No hosts to generate interfaces from!' >> $APICLIlogfilepath
-    echo >> $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'No hosts to generate interfaces from!' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
 else
     GetHostInterfaces
 fi
 
-# -------------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------------
-
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2017-11-09
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
 # -------------------------------------------------------------------------------------------------
@@ -2555,21 +2534,21 @@ fi
 # no more objects
 # -------------------------------------------------------------------------------------------------
 
-echo
-echo $APICLIdetaillvl' CSV dump - Completed!'
-echo
+echo | tee -a -i $APICLIlogfilepath
+echo $APICLIdetaillvl' CSV dump - Completed!' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
-echo
-echo
+echo | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
 
 # -------------------------------------------------------------------------------------------------
 # Finished with exporting
 # -------------------------------------------------------------------------------------------------
 
-echo
-echo 'Dumps Completed!'
-echo
+echo | tee -a -i $APICLIlogfilepath
+echo 'Dumps Completed!' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
 
 # =================================================================================================

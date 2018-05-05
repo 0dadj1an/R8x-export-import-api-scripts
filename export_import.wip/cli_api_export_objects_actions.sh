@@ -3,7 +3,7 @@
 # SCRIPT Object dump action operations for API CLI Operations
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
@@ -52,31 +52,63 @@ export primarytargetoutputformat=$FileExtJSON
 # Start executing Main operations
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-04-3 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04-4 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
+
+export templogfilepath=/var/tmp/templog_$ScriptName.`date +%Y%m%d-%H%M%S%Z`.log
+echo > $templogfilepath
+
+echo 'Configure working paths for export and dump' >> $templogfilepath
+echo >> $templogfilepath
+
+echo "domainnamenospace = '$domainnamenospace' " >> $templogfilepath
+echo "CLIparm_NODOMAINFOLDERS = '$CLIparm_NODOMAINFOLDERS' " >> $templogfilepath
+echo "primarytargetoutputformat = '$primarytargetoutputformat' " >> $templogfilepath
+echo "APICLICSVExportpathbase = '$APICLICSVExportpathbase' " >> $templogfilepath
+echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
+
+# ------------------------------------------------------------------------
 
 if [ ! -z "$domainnamenospace" ] && [ "$CLIparm_NODOMAINFOLDERS" != "true" ] ; then
     # Handle adding domain name to path for MDM operations
     export APICLIpathexport=$APICLICSVExportpathbase/$domainnamenospace
 
+    echo 'Handle adding domain name to path for MDM operations' >> $templogfilepath
+    echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
+
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 else
     # NOT adding domain name to path for MDM operations
     export APICLIpathexport=$APICLICSVExportpathbase
 
+    echo 'NOT adding domain name to path for MDM operations' >> $templogfilepath
+    echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
+
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 fi
+
+# ------------------------------------------------------------------------
 
 # primary operation is export to primarytargetoutputformat
 export APICLIpathexport=$APICLIpathexport/$primarytargetoutputformat
 
+echo | tee -a -i $APICLIlogfilepath $templogfilepath
+echo 'Export to '$primarytargetoutputformat' Starting!' | tee -a -i $APICLIlogfilepath $templogfilepath
+
 if [ ! -r $APICLIpathexport ] ; then
-    mkdir $APICLIpathexport
+    mkdir -p -v $APICLIpathexport >> $templogfilepath
 fi
+
+echo >> $templogfilepath
+echo 'After Evaluation of script type' >> $templogfilepath
+echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
+echo " = '$' " >> $templogfilepath
+
+# ------------------------------------------------------------------------
 
 if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     # for JSON provide the detail level
@@ -84,7 +116,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     export APICLIpathexport=$APICLIpathexport/$APICLIdetaillvl
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 
     export APICLIJSONpathexportwip=
@@ -94,12 +126,19 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
         export APICLIJSONpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLIJSONpathexportwip ] ; then
-            mkdir $APICLIJSONpathexportwip
+            mkdir -p -v $APICLIJSONpathexportwip >> $templogfilepath
         fi
     fi
 else    
     export APICLIJSONpathexportwip=
 fi
+
+echo >> $templogfilepath
+echo 'After handling json target' >> $templogfilepath
+echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
+echo "APICLIJSONpathexportwip = '$APICLIJSONpathexportwip' " >> $templogfilepath
+
+# ------------------------------------------------------------------------
 
 if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
     # for CSV handle specifics, like wip
@@ -111,12 +150,19 @@ if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
         export APICLICSVpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLICSVpathexportwip ] ; then
-            mkdir $APICLICSVpathexportwip
+            mkdir -p -v $APICLICSVpathexportwip >> $templogfilepath
         fi
     fi
 else
     export APICLICSVpathexportwip=
 fi
+
+echo >> $templogfilepath
+echo 'After handling csv target' >> $templogfilepath
+echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
+echo "APICLICSVpathexportwip = '$APICLICSVpathexportwip' " >> $templogfilepath
+
+# ------------------------------------------------------------------------
 
 export APICLIfileexportpost='_'$APICLIdetaillvl'_'$APICLIfileexportsuffix
 
@@ -129,33 +175,51 @@ export APICLIJSONfooterfilesuffix=footer
 
 export APICLIJSONfileexportpost='_'$APICLIdetaillvl'_'$APICLIJSONfileexportsuffix
 
+echo >> $templogfilepath
+echo 'Setup other file and path variables' >> $templogfilepath
+echo "APICLIfileexportpost = '$APICLIfileexportpost' " >> $templogfilepath
+echo "APICLICSVheaderfilesuffix = '$APICLICSVheaderfilesuffix' " >> $templogfilepath
+echo "APICLICSVfileexportpost = '$APICLICSVfileexportpost' " >> $templogfilepath
+echo "APICLIJSONheaderfilesuffix = '$APICLIJSONheaderfilesuffix' " >> $templogfilepath
+echo "APICLIJSONfooterfilesuffix = '$APICLIJSONfooterfilesuffix' " >> $templogfilepath
+echo "APICLIJSONfileexportpost = '$APICLIJSONfileexportpost' " >> $templogfilepath
 
-echo
-echo 'Dump to '$primarytargetoutputformat' Starting!'
-echo 'Dump "'$APICLIdetaillvl'" details to path:  '$APICLIpathexport
-echo
+# ------------------------------------------------------------------------
+
+echo >> $templogfilepath
+
+cat $templogfilepath >> $APICLIlogfilepath
+rm -v $templogfilepath >> $APICLIlogfilepath
+
+# ------------------------------------------------------------------------
+
+echo 'Dump "'$APICLIdetaillvl'" details to path:  '$APICLIpathexport | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04-3
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04-4
 
+
+# =================================================================================================
+# -------------------------------------------------------------------------------------------------
+# START : Main Operational repeated proceedures - Export Objects to raw JSON
+# -------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------------------
-# Main Operational repeated proceedure - ExportObjectsToCSVviaJQ
+# Main Operational repeated proceedure - ExportRAWObjectToJSON
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-05 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-05 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 # The Main Operational Procedure is the meat of the script's repeated actions.
 #
 # For this script the $APICLIobjecttype details is exported to a json at the $APICLIdetaillvl.
 
-MainOperationalProcedure () {
+ExportRAWObjectToJSON () {
     #
-    # Screen width template for sizing, default width of 80 characters assumed
+    # Export Objects to raw JSON
     #
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 
     # System Object selection operands
     # export systemobjectselector='select(."meta-info"."creator" != "System")'
@@ -178,11 +242,11 @@ MainOperationalProcedure () {
     objectstoshow=$objectstotal
 
     if [ $objectstoshow -le 0 ] ; then
-        echo "Found $objectstoshow $APICLIobjecttype objects.  No objects found!  Skipping!..."
+        echo "Found $objectstoshow $APICLIobjecttype objects.  No objects found!  Skipping!..." | tee -a -i $APICLIlogfilepath
     else
     
-        echo
-        echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:"
+        echo | tee -a -i $APICLIlogfilepath
+        echo "Processing $objectstoshow $APICLIobjecttype objects in $APICLIObjectLimit object chunks:" | tee -a -i $APICLIlogfilepath
 
         objectslefttoshow=$objectstoshow
         currentoffset=0
@@ -216,8 +280,8 @@ MainOperationalProcedure () {
                 export APICLIfileexport=$APICLIpathexport/$APICLIfileexportpre$APICLIfilename$APICLIfileexportpost
             fi
     
-            echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currentoffset to $nextoffset of $objectslefttoshow remaining!"
-            echo '    Dump to '$APICLIfileexport
+            echo "  Now processing up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currentoffset to $nextoffset of $objectslefttoshow remaining!" | tee -a -i $APICLIlogfilepath
+            echo '    Dump to '$APICLIfileexport | tee -a -i $APICLIlogfilepath
 
             #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms > $APICLIfileexport
     
@@ -226,7 +290,7 @@ MainOperationalProcedure () {
                 if [ x"$NoSystemObjects" = x"true" ] ; then
                     # Ignore System Objects
                 	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-                        echo '      No System Objects.  Selector = '$systemobjectselector
+                        echo '      No System Objects.  Selector = '$systemobjectselector | tee -a -i $APICLIlogfilepath
                     fi
                     #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ .objects[] | $systemobjectselector >> $APICLIfileexport
                     #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$systemobjectselector"' | @json' >> $APICLIfileexport
@@ -234,7 +298,7 @@ MainOperationalProcedure () {
                 else   
                     # Don't Ignore System Objects
                 	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-                        echo '      All objects, including System Objects'
+                        echo '      All objects, including System Objects' | tee -a -i $APICLIlogfilepath
                     fi
                     mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms >> $APICLIfileexport
                 fi
@@ -242,7 +306,7 @@ MainOperationalProcedure () {
                 # standard detail-level JSON dump
                 # Don't Ignore System Objects since we can't filter them based on data in standard detail-level
             	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-                    echo '      All objects, including System Objects'
+                    echo '      All objects, including System Objects' | tee -a -i $APICLIlogfilepath
                 fi
                 mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms >> $APICLIfileexport
             fi
@@ -254,15 +318,12 @@ MainOperationalProcedure () {
         done
     
     
-        echo
-        tail $APICLIfileexport
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        tail $APICLIfileexport | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     fi
     
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
 }
 
@@ -271,6 +332,11 @@ MainOperationalProcedure () {
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------------
+# END : Main Operational repeated proceedures - Export Objects to raw JSON
+# -------------------------------------------------------------------------------------------------
+# =================================================================================================
 
 
 # -------------------------------------------------------------------------------------------------
@@ -281,7 +347,7 @@ export APICLIobjecttype=host
 export APICLIobjectstype=hosts
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -292,7 +358,7 @@ export APICLIobjecttype=network
 export APICLIobjectstype=networks
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -303,7 +369,7 @@ export APICLIobjecttype=group
 export APICLIobjectstype=groups
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -314,7 +380,7 @@ export APICLIobjecttype=group-with-exclusion
 export APICLIobjectstype=groups-with-exclusion
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -325,7 +391,7 @@ export APICLIobjecttype=address-range
 export APICLIobjectstype=address-ranges
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -336,7 +402,7 @@ export APICLIobjecttype=multicast-address-range
 export APICLIobjectstype=multicast-address-ranges
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -347,7 +413,7 @@ export APICLIobjecttype=dns-domain
 export APICLIobjectstype=dns-domains
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -358,7 +424,7 @@ export APICLIobjecttype=security-zone
 export APICLIobjectstype=security-zones
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -369,7 +435,7 @@ export APICLIobjecttype=dynamic-object
 export APICLIobjectstype=dynamic-objects
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -380,7 +446,7 @@ export APICLIobjecttype=simple-gateway
 export APICLIobjectstype=simple-gateways
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -391,7 +457,7 @@ export APICLIobjecttype=time
 export APICLIobjectstype=times
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -402,7 +468,7 @@ export APICLIobjecttype=time-group
 export APICLIobjectstype=time-groups
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -413,7 +479,7 @@ export APICLIobjecttype=access-role
 export APICLIobjectstype=access-roles
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -424,7 +490,7 @@ export APICLIobjecttype=opsec-application
 export APICLIobjectstype=opsec-applications
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -441,7 +507,7 @@ export APICLIobjecttype=tag
 export APICLIobjectstype=tags
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -458,7 +524,7 @@ export APICLIobjecttype=service-tcp
 export APICLIobjectstype=services-tcp
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -469,7 +535,7 @@ export APICLIobjecttype=service-udp
 export APICLIobjectstype=services-udp
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -480,7 +546,7 @@ export APICLIobjecttype=service-icmp
 export APICLIobjectstype=services-icmp
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -491,7 +557,7 @@ export APICLIobjecttype=service-icmp6
 export APICLIobjectstype=services-icmp6
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -502,7 +568,7 @@ export APICLIobjecttype=service-sctp
 export APICLIobjectstype=services-sctp
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -513,7 +579,7 @@ export APICLIobjecttype=service-other
 export APICLIobjectstype=services-other
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -524,7 +590,7 @@ export APICLIobjecttype=service-dce-rpc
 export APICLIobjectstype=services-dce-rpc
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -535,7 +601,7 @@ export APICLIobjecttype=service-rpc
 export APICLIobjectstype=services-rpc
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -546,7 +612,7 @@ export APICLIobjecttype=service-group
 export APICLIobjectstype=service-groups
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -557,7 +623,7 @@ export APICLIobjecttype=application-site
 export APICLIobjectstype=application-sites
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -568,7 +634,7 @@ export APICLIobjecttype=application-site-category
 export APICLIobjectstype=application-site-categories
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
@@ -579,19 +645,21 @@ export APICLIobjecttype=application-site-group
 export APICLIobjectstype=application-site-groups
 export APICLIexportnameaddon=
 
-MainOperationalProcedure
+ExportRAWObjectToJSON
 
 
 # -------------------------------------------------------------------------------------------------
 # no more objects
 # -------------------------------------------------------------------------------------------------
 
-echo
-echo $APICLIdetaillvl' - Completed!'
-echo
+echo | tee -a -i $APICLIlogfilepath
+echo $APICLIdetaillvl' - Completed!' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
-echo
-echo
+echo | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
+
+return 0
 
 # =================================================================================================
 # END:  Export objects to json in set detail level from root script

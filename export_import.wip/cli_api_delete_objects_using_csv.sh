@@ -3,7 +3,7 @@
 # SCRIPT Object delete using object-names csv files for API CLI Operations
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
@@ -566,23 +566,23 @@ CommandLineParameterHandler "$@"
 
 
 # -------------------------------------------------------------------------------------------------
-# Local Handle request for help and exit
+# Local Handle request for help and return
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
-# Was help requested, if so show local content and exit
+# Was help requested, if so show local content and return
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
     # Show Local Help
     doshowlocalhelp
-    exit 255 
+    return 255 
 fi
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1032,7 +1032,7 @@ SetupLogin2MgmtCLI () {
 # Login2MgmtCLI - Process Login to Management CLI
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 Login2MgmtCLI () {
@@ -1052,7 +1052,7 @@ Login2MgmtCLI () {
         echo | tee -a -i $APICLIlogfilepath
         echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
-        exit $SUBEXITCODE
+        return $SUBEXITCODE
     
     else
         echo | tee -a -i $APICLIlogfilepath
@@ -1062,7 +1062,7 @@ Login2MgmtCLI () {
 }
 
 #
-# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1087,6 +1087,8 @@ Login2MgmtCLI () {
 # ConfigureRootPath - Configure root and base path
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-04 -
+
 ConfigureRootPath () {
 
     # ---------------------------------------------------------
@@ -1101,22 +1103,23 @@ ConfigureRootPath () {
     fi
     
     if [ ! -r $APICLIpathroot ] ; then
-        mkdir $APICLIpathroot
+        mkdir -p -v $APICLIpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIpathbase=$APICLIpathroot/$DATE
     
     if [ ! -r $APICLIpathbase ] ; then
-        mkdir $APICLIpathbase
+        mkdir -p -v $APICLIpathbase | tee -a -i $APICLIlogfilepath
     fi
     
-    return 0
 }
 
 
 # -------------------------------------------------------------------------------------------------
 # ConfigureLogPath - Configure log file path and handle temporary log file
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 -
 
 ConfigureLogPath () {
 
@@ -1131,13 +1134,13 @@ ConfigureLogPath () {
     fi
     
     if [ ! -r $APICLIlogpathroot ] ; then
-        mkdir $APICLIlogpathroot
+        mkdir -p -v $APICLIlogpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogpathbase=$APICLIlogpathroot/$DATE
     
     if [ ! -r $APICLIlogpathbase ] ; then
-        mkdir $APICLIlogpathbase
+        mkdir -p -v $APICLIlogpathbase | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogfilepathtemp=$APICLIlogfilepath
@@ -1146,7 +1149,6 @@ ConfigureLogPath () {
     cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
     rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
     
-    return 0
 }
 
 
@@ -1347,8 +1349,7 @@ else
 fi
 
 if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-    outstring="domaintarget = '$domaintarget' " 
-    echo $outstring | tee -a -i $APICLIlogfilepath
+    echo "domaintarget = '$domaintarget' " | tee -a -i $APICLIlogfilepath
 fi
 
 Login2MgmtCLI
@@ -1414,7 +1415,7 @@ if [ ! -z "$domainnamenospace" ] && [ "$CLIparm_NODOMAINFOLDERS" != "true" ] ; t
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 else
     # NOT adding domain name to path for MDM operations
@@ -1424,7 +1425,7 @@ else
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 fi
 
@@ -1463,7 +1464,7 @@ else
 fi
 
 if [ ! -r $APICLIpathexport ] ; then
-    mkdir $APICLIpathexport
+    mkdir -p -v $APICLIpathexport >> $templogfilepath
 fi
 
 echo >> $templogfilepath
@@ -1479,7 +1480,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     export APICLIpathexport=$APICLIpathexport/$APICLIdetaillvl
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 
     export APICLIJSONpathexportwip=
@@ -1489,7 +1490,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
         export APICLIJSONpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLIJSONpathexportwip ] ; then
-            mkdir $APICLIJSONpathexportwip
+            mkdir -p -v $APICLIJSONpathexportwip >> $templogfilepath
         fi
     fi
 else    
@@ -1513,7 +1514,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
         export APICLICSVpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLICSVpathexportwip ] ; then
-            mkdir $APICLICSVpathexportwip
+            mkdir -p -v $APICLICSVpathexportwip >> $templogfilepath
         fi
     fi
 else
@@ -1563,13 +1564,17 @@ echo | tee -a -i $APICLIlogfilepath
 # /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04-3
 
 
+# =================================================================================================
 # -------------------------------------------------------------------------------------------------
-# Main Operational repeated proceedure - DeleteSimpleObjects
+# START : Main Operational repeated proceedures - Delete Simple Objects
 # -------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------------------
-# Operational repeated proceedure - Delete Simple Objects
+# DeleteSimpleObjects - Operational repeated proceedure
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
 
 # The Operational repeated proceedure - Delete Simple Objects is the meat of the script's simple
 # objects releated repeated actions.
@@ -1592,14 +1597,14 @@ DeleteSimpleObjects () {
     #export APICLIDeleteCSVfile=$APICLICSVDeletepathbase/$APICLICSVobjecttype'_'$APICLIdetaillvl'_csv'$APICLICSVfileexportsuffix
     export APICLIDeleteCSVfile=$APICLICSVDeletepathbase/$APICLIfilename
 
-    export OutputPath=$APICLIpathexport/$APICLIfileexportpre'add_'$APICLIobjecttype'_'$APICLIfileexportext
+    export OutputPath=$APICLIpathexport/$APICLIfileexportpre'delete_'$APICLIobjecttype'_'$APICLIfileexportext
     
     if [ ! -r $APICLIDeleteCSVfile ] ; then
         # no CSV file for this type of object
-        echo
-        echo 'CSV file for object '$APICLIobjecttype' missing : '$APICLIDeleteCSVfile
-        echo 'Skipping!'
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo 'CSV file for object '$APICLIobjecttype' missing : '$APICLIDeleteCSVfile | tee -a -i $APICLIlogfilepath
+        echo 'Skipping!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         return 0
     fi
 
@@ -1607,45 +1612,51 @@ DeleteSimpleObjects () {
     export MgmtCLI_IgnoreErr_OpParms="ignore-warnings true ignore-errors true --ignore-errors true"
     export MgmtCLI_Delete_OpParms="details-level \"$APICLIdetaillvl\" $MgmtCLI_IgnoreErr_OpParms $MgmtCLI_Base_OpParms"
     
-    echo
-    echo "Delete $APICLIobjecttype using CSV File : $APICLIDeleteCSVfile"
-    echo "  mgmt_cli parameters : $MgmtCLI_Delete_OpParms"
-    echo "  and dump to $OutputPath"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Delete $APICLIobjecttype using CSV File : $APICLIDeleteCSVfile" | tee -a -i $APICLIlogfilepath
+    echo "  mgmt_cli parameters : $MgmtCLI_Delete_OpParms" | tee -a -i $APICLIlogfilepath
+    echo "  and dump to $OutputPath" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     mgmt_cli delete $APICLIobjecttype --batch $APICLIDeleteCSVfile $MgmtCLI_Delete_OpParms > $OutputPath
 
-    echo
-    tail $OutputPath
-    echo
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    tail $OutputPath | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
 
-    echo
-    echo 'Publish $APICLIobjecttype object changes!  This could take a while...'
-    echo
-    mgmt_cli publish -s $APICLIsessionfile
+    echo | tee -a -i $APICLIlogfilepath
+    echo 'Publish $APICLIobjecttype object changes!  This could take a while...' | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    mgmt_cli publish -s $APICLIsessionfile | tee -a -i $APICLIlogfilepath
         
-    echo
-    echo "Done with Deleting $APICLIobjecttype using CSV File : $APICLIDeleteCSVfile"
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Done with Deleting $APICLIobjecttype using CSV File : $APICLIDeleteCSVfile" | tee -a -i $APICLIlogfilepath
 
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
 }
 
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
+
+
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
+
+# -------------------------------------------------------------------------------------------------
+# END : Main Operational repeated proceedures - Delete Simple Objects
+# -------------------------------------------------------------------------------------------------
+# =================================================================================================
 
 # -------------------------------------------------------------------------------------------------
 # handle simple objects
 # -------------------------------------------------------------------------------------------------
 
-echo
-echo $APICLIdetaillvl' CSV delete - simple objects - Delete using CSV starting!'
-echo
+echo | tee -a -i $APICLIlogfilepath
+echo $APICLIdetaillvl' CSV delete - simple objects - Delete using CSV starting!' | tee -a -i $APICLIlogfilepath
+echo | tee -a -i $APICLIlogfilepath
 
 # MODIFIED 2018-03-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #

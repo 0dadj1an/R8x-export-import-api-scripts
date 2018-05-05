@@ -3,7 +3,7 @@
 # SCRIPT Object count totals
 #
 ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptDate=2018-05-05
 
 #
 
@@ -567,23 +567,23 @@ CommandLineParameterHandler "$@"
 
 
 # -------------------------------------------------------------------------------------------------
-# Local Handle request for help and exit
+# Local Handle request for help and return
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-02 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 #
-# Was help requested, if so show local content and exit
+# Was help requested, if so show local content and return
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
     # Show Local Help
     doshowlocalhelp
-    exit 255 
+    return 255 
 fi
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-02
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1033,7 +1033,7 @@ SetupLogin2MgmtCLI () {
 # Login2MgmtCLI - Process Login to Management CLI
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-05-03 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+# MODIFIED 2018-05-04 -\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 Login2MgmtCLI () {
@@ -1053,7 +1053,7 @@ Login2MgmtCLI () {
         echo | tee -a -i $APICLIlogfilepath
         echo "Log output in file $APICLIlogfilepath" | tee -a -i $APICLIlogfilepath
         echo | tee -a -i $APICLIlogfilepath
-        exit $SUBEXITCODE
+        return $SUBEXITCODE
     
     else
         echo | tee -a -i $APICLIlogfilepath
@@ -1063,7 +1063,7 @@ Login2MgmtCLI () {
 }
 
 #
-# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-03
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/-  MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -1088,6 +1088,8 @@ Login2MgmtCLI () {
 # ConfigureRootPath - Configure root and base path
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-04 -
+
 ConfigureRootPath () {
 
     # ---------------------------------------------------------
@@ -1102,22 +1104,23 @@ ConfigureRootPath () {
     fi
     
     if [ ! -r $APICLIpathroot ] ; then
-        mkdir $APICLIpathroot
+        mkdir -p -v $APICLIpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIpathbase=$APICLIpathroot/$DATE
     
     if [ ! -r $APICLIpathbase ] ; then
-        mkdir $APICLIpathbase
+        mkdir -p -v $APICLIpathbase | tee -a -i $APICLIlogfilepath
     fi
     
-    return 0
 }
 
 
 # -------------------------------------------------------------------------------------------------
 # ConfigureLogPath - Configure log file path and handle temporary log file
 # -------------------------------------------------------------------------------------------------
+
+# MODIFIED 2018-05-04 -
 
 ConfigureLogPath () {
 
@@ -1132,13 +1135,13 @@ ConfigureLogPath () {
     fi
     
     if [ ! -r $APICLIlogpathroot ] ; then
-        mkdir $APICLIlogpathroot
+        mkdir -p -v $APICLIlogpathroot | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogpathbase=$APICLIlogpathroot/$DATE
     
     if [ ! -r $APICLIlogpathbase ] ; then
-        mkdir $APICLIlogpathbase
+        mkdir -p -v $APICLIlogpathbase | tee -a -i $APICLIlogfilepath
     fi
     
     export APICLIlogfilepathtemp=$APICLIlogfilepath
@@ -1147,7 +1150,6 @@ ConfigureLogPath () {
     cat $APICLIlogfilepathtemp >> $APICLIlogfilepath
     rm $APICLIlogfilepathtemp | tee -a -i $APICLIlogfilepath
     
-    return 0
 }
 
 
@@ -1348,8 +1350,7 @@ else
 fi
 
 if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-    outstring="domaintarget = '$domaintarget' " 
-    echo $outstring | tee -a -i $APICLIlogfilepath
+    echo "domaintarget = '$domaintarget' " | tee -a -i $APICLIlogfilepath
 fi
 
 Login2MgmtCLI
@@ -1415,7 +1416,7 @@ if [ ! -z "$domainnamenospace" ] && [ "$CLIparm_NODOMAINFOLDERS" != "true" ] ; t
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 else
     # NOT adding domain name to path for MDM operations
@@ -1425,7 +1426,7 @@ else
     echo "APICLIpathexport = '$APICLIpathexport' " >> $templogfilepath
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 fi
 
@@ -1464,7 +1465,7 @@ else
 fi
 
 if [ ! -r $APICLIpathexport ] ; then
-    mkdir $APICLIpathexport
+    mkdir -p -v $APICLIpathexport >> $templogfilepath
 fi
 
 echo >> $templogfilepath
@@ -1480,7 +1481,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
     export APICLIpathexport=$APICLIpathexport/$APICLIdetaillvl
 
     if [ ! -r $APICLIpathexport ] ; then
-        mkdir $APICLIpathexport
+        mkdir -p -v $APICLIpathexport >> $templogfilepath
     fi
 
     export APICLIJSONpathexportwip=
@@ -1490,7 +1491,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtJSON" ] ; then
         export APICLIJSONpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLIJSONpathexportwip ] ; then
-            mkdir $APICLIJSONpathexportwip
+            mkdir -p -v $APICLIJSONpathexportwip >> $templogfilepath
         fi
     fi
 else    
@@ -1514,7 +1515,7 @@ if [ x"$primarytargetoutputformat" = x"$FileExtCSV" ] ; then
         export APICLICSVpathexportwip=$APICLIpathexport/wip
         
         if [ ! -r $APICLICSVpathexportwip ] ; then
-            mkdir $APICLICSVpathexportwip
+            mkdir -p -v $APICLICSVpathexportwip >> $templogfilepath
         fi
     fi
 else
@@ -1577,26 +1578,24 @@ echo
 # GetNumberOfObjectsviaJQ
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-03 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-#
-
-# The GetNumberOfObjectsviaJQ is the obtains the number of objects for that type indicated.
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 GetNumberOfObjectsviaJQ () {
-
+    #
+    # The GetNumberOfObjectsviaJQ obtains the number of objects for that object type indicated.
+    #
+    
     export objectstotal=
-    export objectsfrom=
-    export objectsto=
     
     #
     # Troubleshooting output
     #
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        echo '$CSVJQparms' - $CSVJQparms
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo 'Get objectstotal of object type '$APICLIobjectstype | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     fi
     
     objectstotal=$(mgmt_cli show $APICLIobjectstype limit 1 offset 0 details-level "standard" --format json -s $APICLIsessionfile | $JQ ".total")
@@ -1604,19 +1603,20 @@ GetNumberOfObjectsviaJQ () {
 
     if [ $errorreturn != 0 ] ; then
         # Something went wrong, terminate
-        exit $errorreturn
+        echo 'Problem during mgmt_cli objectstotal operation! error return = '$errorreturn | tee -a -i $APICLIlogfilepath
+        return $errorreturn
     fi
     
     export number_of_objects=$objectstotal
 
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
 }
 
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-03
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 
@@ -2117,6 +2117,9 @@ echo 'Number of '$APICLIobjecttype' Objects is = '$number_of_objects' '$APICLIob
 # SetupExportComplexObjectsToCSVviaJQ
 # -------------------------------------------------------------------------------------------------
 
+# MODIFIED 2018-05-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
 # The SetupExportComplexObjectsToCSVviaJQ is the setup actions for the script's repeated actions.
 #
 
@@ -2139,44 +2142,44 @@ SetupExportComplexObjectsToCSVviaJQ () {
 
     
     if [ ! -r $APICLICSVpathexportwip ] ; then
-        mkdir $APICLICSVpathexportwip
+        mkdir -p -v $APICLICSVpathexportwip | tee -a -i $APICLIlogfilepath
     fi
 
     if [ -r $APICLICSVfile ] ; then
-        rm $APICLICSVfile
+        rm $APICLICSVfile >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfileheader ] ; then
-        rm $APICLICSVfileheader
+        rm $APICLICSVfileheader >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfiledata ] ; then
-        rm $APICLICSVfiledata
+        rm $APICLICSVfiledata >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfilesort ] ; then
-        rm $APICLICSVfilesort
+        rm $APICLICSVfilesort >> $APICLIlogfilepath
     fi
     if [ -r $APICLICSVfileoriginal ] ; then
-        rm $APICLICSVfileoriginal
+        rm $APICLICSVfileoriginal >> $APICLIlogfilepath
     fi
     
-    echo
-    echo "Creat $APICLIcomplexobjectstype CSV File : $APICLICSVfile"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Creat $APICLIcomplexobjectstype CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     #
     # Troubleshooting output
     #
     if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
         # Verbose mode ON
-        echo
-        echo '$CSVFileHeader' - $CSVFileHeader
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '$CSVFileHeader' - $CSVFileHeader | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
     
     fi
     
-    echo $CSVFileHeader > $APICLICSVfileheader
-    echo
+    echo $CSVFileHeader > $APICLICSVfileheader | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    echo
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
     #
@@ -2185,52 +2188,50 @@ SetupExportComplexObjectsToCSVviaJQ () {
 
 # -------------------------------------------------------------------------------------------------
 
-# MODIFIED 2018-03-04 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-04
 
 # -------------------------------------------------------------------------------------------------
 # FinalizeExportComplexObjectsToCSVviaJQ
 # -------------------------------------------------------------------------------------------------
 
-# The FinalizeExportComplexObjectsToCSVviaJQ is the finaling actions for the script's repeated actions.
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
 FinalizeExportComplexObjectsToCSVviaJQ () {
     #
-    # Screen width template for sizing, default width of 80 characters assumed
+    # The FinalizeExportComplexObjectsToCSVviaJQ is the finaling actions for the script's repeated actions.
     #
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 
-    if [ ! -r $APICLICSVfileheader ] ; then
+    if [ ! -r "$APICLICSVfileheader" ] ; then
         # Uh, Oh, something went wrong, no header file
-        echo
-        echo '!!!! Error header file missing : '$APICLICSVfileheader
-        echo 'Terminating!'
-        echo
-        exit 254
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!!!! Error header file missing : '$APICLICSVfileheader | tee -a -i $APICLIlogfilepath
+        echo 'Terminating!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        return 254
         
-    elif [ ! -r $APICLICSVfiledata ] ; then
+    elif [ ! -r "$APICLICSVfiledata" ] ; then
         # Uh, Oh, something went wrong, no data file
-        echo
-        echo '!!!! Error data file missing : '$APICLICSVfiledata
-        echo 'Terminating!'
-        echo
-        exit 253
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!!!! Error data file missing : '$APICLICSVfiledata | tee -a -i $APICLIlogfilepath
+        echo 'Terminating!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
+        return 253
         
-    elif [ ! -s $APICLICSVfiledata ] ; then
+    elif [ ! -s "$APICLICSVfiledata" ] ; then
         # data file is empty, nothing was found
-        echo
-        echo '!! data file is empty : '$APICLICSVfiledata
-        echo 'Skipping CSV creation!'
-        echo
+        echo | tee -a -i $APICLIlogfilepath
+        echo '!! data file is empty : '$APICLICSVfiledata | tee -a -i $APICLIlogfilepath
+        echo 'Skipping CSV creation!' | tee -a -i $APICLIlogfilepath
+        echo | tee -a -i $APICLIlogfilepath
         return 0
         
     fi
 
-    echo
-    echo "Sort data and build CSV export file"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Sort data and build CSV export file" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
     cat $APICLICSVfileheader > $APICLICSVfileoriginal
     cat $APICLICSVfiledata >> $APICLICSVfileoriginal
@@ -2240,26 +2241,24 @@ FinalizeExportComplexObjectsToCSVviaJQ () {
     cat $APICLICSVfileheader > $APICLICSVfile
     cat $APICLICSVfilesort >> $APICLICSVfile
     
-    echo
-    echo "Done creating $APICLIcomplexobjectstype CSV File : $APICLICSVfile"
-    echo
+    echo | tee -a -i $APICLIlogfilepath
+    echo "Done creating $APICLIcomplexobjectstype CSV File : $APICLICSVfile" | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    head $APICLICSVfile
-    echo
-    echo
-   
+    head $APICLICSVfile | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
+    echo | tee -a -i $APICLIlogfilepath
     
-    #              1111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990
-    #    01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-
-    echo
+    
+    echo | tee -a -i $APICLIlogfilepath
     return 0
     
-    #
 }
 
+# -------------------------------------------------------------------------------------------------
+
 #
-# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-03-04
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -2313,18 +2312,24 @@ SetupGetGroupMembers () {
 #
 # FinalizeGetGroupMembers
 
+# MODIFIED 2018-05-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#
+
 FinalizeGetGroupMembers () {
 
     FinalizeExportComplexObjectsToCSVviaJQ
     errorreturn=$?
     if [ $errorreturn != 0 ] ; then
         # Something went wrong, terminate
-        exit $errorreturn
+        return $errorreturn
     fi
     
     return 0
 }
     
+
+#
+# /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ MODIFIED 2018-05-05
 # MODIFIED 2018-03-05 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #
 
@@ -2416,7 +2421,7 @@ GetArrayOfGroupObjects () {
         errorreturn=$?
         if [ $errorreturn != 0 ] ; then
             # Something went wrong, terminate
-            exit $errorreturn
+            return $errorreturn
         fi
 
         objectslefttoshow=`expr $objectslefttoshow - $APICLIObjectLimit`
