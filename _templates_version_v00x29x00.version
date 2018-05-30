@@ -1,5 +1,5 @@
 #
-# SCRIPTS Common operations
+# SCRIPT Base Template for API CLI Operations with command line parameters
 #
 ScriptVersion=00.29.00
 ScriptDate=2018-05-04

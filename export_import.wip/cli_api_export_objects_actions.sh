@@ -2,12 +2,12 @@
 #
 # SCRIPT Object dump action operations for API CLI Operations
 #
-ScriptVersion=00.29.00
-ScriptDate=2018-05-05
+ScriptVersion=00.29.01
+ScriptDate=2018-05-30
 
 #
 
-export APIActionsScriptVersion=v00x29x00
+export APIActionsScriptVersion=v00x29x01
 ActionScriptName=cli_api_export_objects_actions
 
 # =================================================================================================

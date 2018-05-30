@@ -2,12 +2,12 @@
 #
 # SCRIPT Object dump to CSV action operations for API CLI Operations
 #
-ScriptVersion=00.29.00
-ScriptDate=2018-05-05
+ScriptVersion=00.29.01
+ScriptDate=2018-05-30
 
 #
 
-export APIActionsScriptVersion=v00x29x00
+export APIActionsScriptVersion=v00x29x01
 ActionScriptName=cli_api_export_objects_actions_to_csv
 
 # =================================================================================================
@@ -369,7 +369,7 @@ FinalizeExportObjectsToCSVviaJQ () {
 ExportObjectsToCSVviaJQ () {
     #
     
-    if [[ $number_of_objects -le 1 ]] ; then
+    if [[ $number_of_objects -lt 1 ]] ; then
         # no objects of this type
  
         echo "No objects of type $APICLIobjecttype to process, skipping..." | tee -a -i $APICLIlogfilepath
