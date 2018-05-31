@@ -40,7 +40,7 @@ export APICLIlogfilepath=/var/tmp/$ScriptName'_'$APIScriptVersion'_'$DATEDTGS.lo
 #
 export cli_api_cmdlineparm_handler_root=.
 export cli_api_cmdlineparm_handler_folder=common
-export cli_api_cmdlineparm_handler_file=cmd_line_parameters_handler.action.common.005.v00.29.00.sh
+export cli_api_cmdlineparm_handler_file=cmd_line_parameters_handler.action.common.005.v$ScriptVersion.sh
 
 # -------------------------------------------------------------------------------------------------
 # Root script declarations

@@ -2,12 +2,12 @@
 #
 # SCRIPT Base Template for API CLI Operations with command line parameters script utilization
 #
-ScriptVersion=00.29.00
-ScriptDate=2018-05-04
+ScriptVersion=00.29.01
+ScriptDate=2018-05-30
 
 #
 
-export APIScriptVersion=v00x29x00
+export APIScriptVersion=v00x29x01
 ScriptName=api_mgmt_cli_shell_template_with_cmd_line_parameters_script.template.v$ScriptVersion
 
 # =================================================================================================
@@ -40,7 +40,7 @@ export APICLIlogfilepath=/var/tmp/$ScriptName'_'$APIScriptVersion'_'$DATEDTGS.lo
 #
 export cli_api_cmdlineparm_handler_root=.
 export cli_api_cmdlineparm_handler_folder=common
-export cli_api_cmdlineparm_handler_file=cmd_line_parameters_handler.action.common.005.v00.29.00.sh
+export cli_api_cmdlineparm_handler_file=cmd_line_parameters_handler.action.common.005.v$APIScriptVersion.sh
 
 # -------------------------------------------------------------------------------------------------
 # Root script declarations
