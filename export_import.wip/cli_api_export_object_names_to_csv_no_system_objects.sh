@@ -3,7 +3,7 @@
 # SCRIPT Object name export to CSV file for API CLI Operations
 #
 ScriptVersion=00.29.02
-ScriptDate=2018-06-19
+ScriptDate=2018-06-24
 
 #
 
@@ -370,7 +370,9 @@ export CLIparm_deletepath=
 
 export CLIparm_csvpath=
 
-export CLIparm_NoSystemObjects=true
+# MODIFIED 2018-06-24 -
+#export CLIparm_NoSystemObjects=true
+export CLIparm_NoSystemObjects=false
 
 export CLIparm_NOWAIT=
 export CLIparm_CLEANUPWIP=
@@ -1373,7 +1375,9 @@ export APICLIdetaillvl=name
 # Only changes this parameter to force the specific state of CLIparm_NoSystemObjects
 # since it is set using the command line parameters --SO (false) and --NSO (true)
 #
-export CLIparm_NoSystemObjects=true
+# MODIFIED 2018-06-24 -
+#export CLIparm_NoSystemObjects=true
+export CLIparm_NoSystemObjects=false
 
 # ADDED 2018-04-25 -
 export primarytargetoutputformat=$FileExtCSV

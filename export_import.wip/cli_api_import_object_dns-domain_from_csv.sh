@@ -3,7 +3,7 @@
 # SCRIPT Object import using CSV file for API CLI Operations for setting dns-domain
 #
 ScriptVersion=00.29.02
-ScriptDate=2018-06-19
+ScriptDate=2018-06-24
 
 #
 
@@ -370,7 +370,9 @@ export CLIparm_deletepath=
 
 export CLIparm_csvpath=
 
-export CLIparm_NoSystemObjects=true
+# MODIFIED 2018-06-24 -
+#export CLIparm_NoSystemObjects=true
+export CLIparm_NoSystemObjects=false
 
 export CLIparm_NOWAIT=
 export CLIparm_CLEANUPWIP=

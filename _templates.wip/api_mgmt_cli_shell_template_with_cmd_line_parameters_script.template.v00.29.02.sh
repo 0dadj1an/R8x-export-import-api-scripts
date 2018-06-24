@@ -3,7 +3,7 @@
 # SCRIPT Base Template for API CLI Operations with command line parameters script utilization
 #
 ScriptVersion=00.29.02
-ScriptDate=2018-06-19
+ScriptDate=2018-06-24
 
 #
 
@@ -328,7 +328,9 @@ export CLIparm_deletepath=
 
 export CLIparm_csvpath=
 
-export CLIparm_NoSystemObjects=true
+# MODIFIED 2018-06-24 -
+#export CLIparm_NoSystemObjects=true
+export CLIparm_NoSystemObjects=false
 
 export CLIparm_NOWAIT=
 export CLIparm_CLEANUPWIP=

@@ -3,7 +3,7 @@
 # SCRIPT Object dump to CSV action operations for API CLI Operations
 #
 ScriptVersion=00.29.01
-ScriptDate=2018-05-30
+ScriptDate=2018-06-24
 
 #
 

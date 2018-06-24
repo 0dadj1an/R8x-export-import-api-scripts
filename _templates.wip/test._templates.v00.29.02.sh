@@ -3,7 +3,7 @@
 # SCRIPT Base Template testing script for automated execution of standard tests
 #
 ScriptVersion=00.29.02
-ScriptDate=2018-06-19
+ScriptDate=2018-06-24
 
 #
 

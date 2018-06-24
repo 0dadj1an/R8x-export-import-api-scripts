@@ -2,13 +2,13 @@
 #
 # SCRIPT Template for CLI Operations for command line parameters handling
 #
-ScriptVersion=00.29.02
-ScriptDate=2018-06-24
+ScriptVersion=00.29.00
+ScriptDate=2018-05-04
 
 #
 
-export APIActionsScriptVersion=v00x29x02
-ActionScriptName=cmd_line_parameters_handler.action.common.005.v$ScriptVersion
+export APIActionsScriptVersion=v00x29x00
+ActionScriptName=cmd_line_parameters_handler.action.common.004.v$ScriptVersion
 
 # =================================================================================================
 # Validate Actions Script version is correct for caller
@@ -174,9 +174,7 @@ export CLIparm_deletepath=
 
 export CLIparm_csvpath=
 
-# MODIFIED 2018-06-24 -
-#export CLIparm_NoSystemObjects=true
-export CLIparm_NoSystemObjects=false
+export CLIparm_NoSystemObjects=true
 
 export CLIparm_NOWAIT=
 export CLIparm_CLEANUPWIP=
@@ -781,12 +779,12 @@ dumpcliparmparseresults $@
 #
 
 #
-# Was help requested, if so show it and return
+# Was help requested, if so show it and exit
 #
 if [ x"$SHOWHELP" = x"true" ] ; then
     # Show Help
     doshowhelp
-    return 255 
+    exit 255 
 fi
 
 #
