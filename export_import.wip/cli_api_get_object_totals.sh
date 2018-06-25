@@ -2346,8 +2346,12 @@ FinalizeGetGroupMembers () {
 PopulateArrayOfGroupObjects () {
     
     # System Object selection operands
-    # export systemobjectselector='select(."meta-info"."creator" != "System")'
-    export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    # This one won't work because upgrades set all objects to creator = System"
+    # export notsystemobjectselector='select(."meta-info"."creator" != "System")'
+    #export notsystemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    #
+    # This should work if assumptions aren't wrong
+    export notsystemobjectselector='select(."domain"."name" != "Check Point Data")'
     
     echo "  $APICLIobjectstype - Populate up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currentgroupoffset of $objectslefttoshow remaining!"
 
@@ -2358,8 +2362,8 @@ PopulateArrayOfGroupObjects () {
     
     if [ x"$NoSystemObjects" = x"true" ] ; then
         # Ignore System Objects
-        #MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ ".objects[] | '"$systemobjectselector"' | .name | @sh" -r`"
-        MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ '.objects[] | '"$systemobjectselector"' | .name | @sh' -r`"
+        #MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ ".objects[] | '"$notsystemobjectselector"' | .name | @sh" -r`"
+        MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ '.objects[] | '"$notsystemobjectselector"' | .name | @sh' -r`"
     else   
         # Don't Ignore System Objects
         MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "standard" -s $APICLIsessionfile --format json | $JQ ".objects[].name | @sh" -r`"

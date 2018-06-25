@@ -1762,7 +1762,11 @@ ExportObjectsToCSVviaJQ () {
     export MgmtCLI_Show_OpParms="details-level \"full\" $MgmtCLI_Base_OpParms"
     
     # System Object selection operands
-    export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    # This one won't work because upgrades set all objects to creator = System"
+    #export notsystemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    #
+    # This should work if assumptions aren't wrong
+    export notsystemobjectselector='select(."domain"."name" != "Check Point Data")'
 
     objectstotal=$(mgmt_cli show $APICLIobjectstype limit 1 offset 0 details-level "standard" --format json -s $APICLIsessionfile | $JQ ".total")
 
@@ -1780,7 +1784,7 @@ ExportObjectsToCSVviaJQ () {
         # Verbose mode ON
         echo "  mgmt_cli parameters : $MgmtCLI_Show_OpParms" | tee -a -i $APICLIlogfilepath
         echo '  $CSVJQparms' - $CSVJQparms | tee -a -i $APICLIlogfilepath
-        echo "  System Object Selector : "$systemobjectselector | tee -a -i $APICLIlogfilepath
+        echo "  System Object Selector : "$notsystemobjectselector | tee -a -i $APICLIlogfilepath
     fi
     echo | tee -a -i $APICLIlogfilepath
 
@@ -1794,7 +1798,7 @@ ExportObjectsToCSVviaJQ () {
         if [ x"$NoSystemObjects" = x"true" ] ; then
             # Ignore System Objects
             #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | select(."meta-info"."creator" != "System") | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
-            mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$systemobjectselector"' | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
+            mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$notsystemobjectselector"' | [ '"$CSVJQparms"' ] | @csv' -r >> $APICLICSVfiledata
             errorreturn=$?
         else   
             # Don't Ignore System Objects
@@ -2983,8 +2987,12 @@ FinalizeGetGroupMembers () {
 PopulateArrayOfGroupObjects () {
     
     # System Object selection operands
-    # export systemobjectselector='select(."meta-info"."creator" != "System")'
-    export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    # This one won't work because upgrades set all objects to creator = System"
+    # export notsystemobjectselector='select(."meta-info"."creator" != "System")'
+    #export notsystemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    #
+    # This should work if assumptions aren't wrong
+    export notsystemobjectselector='select(."domain"."name" != "Check Point Data")'
     
     echo "  $APICLIobjectstype - Populate up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currentgroupoffset of $objectslefttoshow remaining!" | tee -a -i $APICLIlogfilepath
 
@@ -2995,8 +3003,8 @@ PopulateArrayOfGroupObjects () {
     
     if [ x"$NoSystemObjects" = x"true" ] ; then
         # Ignore System Objects
-        #MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ ".objects[] | '"$systemobjectselector"' | .name | @sh" -r`"
-        MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ '.objects[] | '"$systemobjectselector"' | .name | @sh' -r`"
+        #MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ ".objects[] | '"$notsystemobjectselector"' | .name | @sh" -r`"
+        MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "full" -s $APICLIsessionfile --format json | $JQ '.objects[] | '"$notsystemobjectselector"' | .name | @sh' -r`"
     else   
         # Don't Ignore System Objects
         MGMT_CLI_GROUPS_STRING="`mgmt_cli show groups limit $APICLIObjectLimit offset $currentgroupoffset details-level "standard" -s $APICLIsessionfile --format json | $JQ ".objects[].name | @sh" -r`"
@@ -3326,10 +3334,14 @@ PopulateArrayOfHostInterfaces () {
     #
     # APICLICSVsortparms can change due to the nature of the object
     #
-
+    
     # System Object selection operands
-    # export systemobjectselector='select(."meta-info"."creator" != "System")'
-    export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    # This one won't work because upgrades set all objects to creator = System"
+    # export notsystemobjectselector='select(."meta-info"."creator" != "System")'
+    #export notsystemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    #
+    # This should work if assumptions aren't wrong
+    export notsystemobjectselector='select(."domain"."name" != "Check Point Data")'
     
     echo | tee -a -i $APICLIlogfilepath
     echo "  $APICLIobjectstype - Populate up to next $APICLIObjectLimit $APICLIobjecttype objects starting with object $currenthostoffset of $objectslefttoshow remaining!" | tee -a -i $APICLIlogfilepath
@@ -3342,8 +3354,8 @@ PopulateArrayOfHostInterfaces () {
     
     if [ x"$NoSystemObjects" = x"true" ] ; then
         # Ignore System Objects
-        #MGMT_CLI_HOSTS_STRING="`mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currenthostoffset details-level "full" -s $APICLIsessionfile --format json | $JQ ".objects[] | '"$systemobjectselector"' | .name | @sh" -r`"
-        MGMT_CLI_HOSTS_STRING="`mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currenthostoffset details-level "full" -s $APICLIsessionfile --format json | $JQ '.objects[] | '"$systemobjectselector"' | .name | @sh' -r`"
+        #MGMT_CLI_HOSTS_STRING="`mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currenthostoffset details-level "full" -s $APICLIsessionfile --format json | $JQ ".objects[] | '"$notsystemobjectselector"' | .name | @sh" -r`"
+        MGMT_CLI_HOSTS_STRING="`mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currenthostoffset details-level "full" -s $APICLIsessionfile --format json | $JQ '.objects[] | '"$notsystemobjectselector"' | .name | @sh' -r`"
     else   
         # Don't Ignore System Objects
         MGMT_CLI_HOSTS_STRING="`mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currenthostoffset details-level "standard" -s $APICLIsessionfile --format json | $JQ ".objects[].name | @sh" -r`"

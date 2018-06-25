@@ -220,10 +220,14 @@ ExportRAWObjectToJSON () {
     #
     # Export Objects to raw JSON
     #
-
+    
     # System Object selection operands
-    # export systemobjectselector='select(."meta-info"."creator" != "System")'
-    export systemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    # This one won't work because upgrades set all objects to creator = System"
+    # export notsystemobjectselector='select(."meta-info"."creator" != "System")'
+    #export notsystemobjectselector='select(."meta-info"."creator" | contains ("System") | not)'
+    #
+    # This should work if assumptions aren't wrong
+    export notsystemobjectselector='select(."domain"."name" != "Check Point Data")'
     
     export APICLIfilename=$APICLIobjectstype
     if [ x"$APICLIexportnameaddon" != x"" ] ; then
@@ -290,11 +294,11 @@ ExportRAWObjectToJSON () {
                 if [ x"$NoSystemObjects" = x"true" ] ; then
                     # Ignore System Objects
                 	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
-                        echo '      No System Objects.  Selector = '$systemobjectselector | tee -a -i $APICLIlogfilepath
+                        echo '      No System Objects.  Selector = '$notsystemobjectselector | tee -a -i $APICLIlogfilepath
                     fi
-                    #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ .objects[] | $systemobjectselector >> $APICLIfileexport
-                    #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$systemobjectselector"' | @json' >> $APICLIfileexport
-                    mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$systemobjectselector" >> $APICLIfileexport
+                    #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ .objects[] | $notsystemobjectselector >> $APICLIfileexport
+                    #mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$notsystemobjectselector"' | @json' >> $APICLIfileexport
+                    mgmt_cli show $APICLIobjectstype limit $APICLIObjectLimit offset $currentoffset $MgmtCLI_Show_OpParms | $JQ '.objects[] | '"$notsystemobjectselector" >> $APICLIfileexport
                 else   
                     # Don't Ignore System Objects
                 	if [ x"$APISCRIPTVERBOSE" = x"true" ] ; then
